@@ -15,13 +15,13 @@ Parity checklist source: `.specs/codebase/PORT-INVENTORY.md`. Cutover is big-ban
 
 ### Features
 
-**Rails app scaffold** - PLANNED
+**Rails app scaffold** - IN PROGRESS (spec.md written, no design needed — Medium scope)
 
 - New Rails app in `sitio-rails`, SQLite3 (no WAL), Tailwind + Hotwire installed
 - RSpec installed and wired as the test framework
 - Dockerfile + basic health check route
 
-**In-app authentication (ADR-002)** - PLANNED
+**In-app authentication (ADR-002)** - IN PROGRESS (spec.md + context.md + design.md + tasks.md written, 8 tasks planned; Execute next — Complex scope)
 
 - `User` model with `has_secure_password`, `admin`/`member` role
 - Login/logout, session cookie, CSRF

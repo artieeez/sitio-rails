@@ -1,7 +1,7 @@
 # State
 
 **Last Updated:** 2026-07-15
-**Current Work:** Project planning - PROJECT.md/ROADMAP.md drafted, no milestone started yet
+**Current Work:** M0 - `inapp-auth` fully planned (Specify → Discuss → Design → Tasks, 8 tasks, T1-T2 sequential then T3/T4/T5/T7 parallel then T6→T8 sequential). `rails-app-scaffold` speced (Medium, no Design/Tasks needed). Execute not yet started for either feature. `.specs/codebase/TESTING.md` established (RSpec, model+request specs, no coverage threshold yet).
 
 ---
 
@@ -35,6 +35,13 @@
 **Trade-off:** One extra gem/setup step vs. Rails' Minitest default.
 **Impact:** Every feature's `tasks.md` gate check should reference `bundle exec rspec` (or scoped paths), once Tasks phase starts for M0.
 
+### AD-005: In-app auth gray areas resolved (2026-07-15)
+
+**Decision:** First-admin bootstrap = one-time signup form usable only while zero users exist. Member creation = admin-only invite, no open signup. Sessions = fixed expiry (no remember-me), exact duration left to agent discretion (default 14 days). Failed logins = rate-limit/lockout (exact threshold left to agent discretion, default 5 attempts/rolling window). Last-admin self-demote/self-delete protection = explicitly not handled in M0.
+**Reason:** User decisions captured directly during the M0 `inapp-auth` Discuss pass; see `.specs/features/inapp-auth/context.md` for full detail.
+**Trade-off:** Exact session/lockout numeric defaults are agent's discretion, not user-specified — may need revisiting once real usage patterns exist.
+**Impact:** Unblocks Design for `inapp-auth`. Resolves the M0 bootstrap-mechanism todo below.
+
 ---
 
 ## Active Blockers
@@ -64,9 +71,9 @@ _None yet._
 
 ## Todos
 
-- [ ] Decide first-admin bootstrap mechanism (seed task vs. invite flow) during M0 Specify
 - [ ] Decide exact public webhook route prefix/naming during M2 Specify (must be the only unauthenticated surface per ADR-004)
 - [ ] Confirm Rails + Ruby target versions when M0 implementation starts (check current stable releases via Context7/web at that time, not now)
+- [x] ~~Decide the fixed-session-expiry mechanism for `inapp-auth`~~ — resolved in Tasks phase as T7: DB-driven `expires_at` column + check in `Authentication` concern. Not yet implemented (Execute pending).
 
 ---
 

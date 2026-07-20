@@ -1,0 +1,26 @@
+<% content_for :title, "Sitio" %>
+
+<section class="w-full max-w-xl space-y-6">
+  <h1 class="text-3xl font-bold text-emerald-800">Sitio</h1>
+  <p class="text-slate-600">
+    Rails bootstrap is live — Tailwind styles this page, Turbo Drive navigates without a full reload,
+    and Stimulus powers the toggle below.
+  </p>
+
+  <div class="flex gap-4">
+    <%= link_to "About (Turbo)", about_path, class: "text-emerald-700 underline" %>
+  </div>
+
+  <div data-controller="toggle" class="rounded-lg border border-slate-200 p-4">
+    <button
+      type="button"
+      data-action="toggle#toggle"
+      class="rounded bg-emerald-700 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-800"
+    >
+      Toggle demo panel
+    </button>
+    <p data-toggle-target="panel" class="mt-3 text-sm text-slate-700">
+      Stimulus is working — this panel can hide and show.
+    </p>
+  </div>
+</section>

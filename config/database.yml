@@ -1,0 +1,46 @@
+# SQLite. Versions 3.8.0 and up are supported.
+# Database file paths are env-driven so production can point at an OKE PVC mount.
+#
+#   SQLITE_DATABASE          — primary DB path (default: storage/<env>.sqlite3)
+#   SQLITE_CACHE_DATABASE    — Solid Cache DB path
+#   SQLITE_QUEUE_DATABASE    — Solid Queue DB path
+#   SQLITE_CABLE_DATABASE    — Solid Cable DB path
+
+default: &default
+  adapter: sqlite3
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+  # ADR-003: Rails 8.1 defaults journal_mode to WAL; force delete (rollback) for NFS.
+  pragmas:
+    journal_mode: delete
+
+development:
+  <<: *default
+  database: <%= ENV.fetch("SQLITE_DATABASE", "storage/development.sqlite3") %>
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  <<: *default
+  database: <%= ENV.fetch("SQLITE_TEST_DATABASE", "storage/test.sqlite3") %>
+
+# SQLite write its data on the local filesystem, as such it requires
+# persistent disks. Production paths default under storage/ and should be
+# overridden via env vars to a PVC mount in OKE (M5).
+production:
+  primary:
+    <<: *default
+    database: <%= ENV.fetch("SQLITE_DATABASE", "storage/production.sqlite3") %>
+  cache:
+    <<: *default
+    database: <%= ENV.fetch("SQLITE_CACHE_DATABASE", "storage/production_cache.sqlite3") %>
+    migrations_paths: db/cache_migrate
+  queue:
+    <<: *default
+    database: <%= ENV.fetch("SQLITE_QUEUE_DATABASE", "storage/production_queue.sqlite3") %>
+    migrations_paths: db/queue_migrate
+  cable:
+    <<: *default
+    database: <%= ENV.fetch("SQLITE_CABLE_DATABASE", "storage/production_cable.sqlite3") %>
+    migrations_paths: db/cable_migrate

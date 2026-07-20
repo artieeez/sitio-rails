@@ -2,10 +2,49 @@
 
 Ruby on Rails rewrite of Sitio (school-trip payment management), replacing the NestJS + React stack in `sitio-monorepo`. See ADRs in `docs/adr/` for the accepted architecture decisions, and `.specs/project/` for the port plan.
 
-- `docs/adr/` — architecture decisions (ported from `sitio-monorepo`, this repo's ADR history going forward)
+## Stack
+
+- Ruby 4.0 / Rails 8.1
+- SQLite3 (rollback journal, no WAL — ADR-003)
+- Hotwire (Turbo + Stimulus) + Tailwind CSS
+- RSpec
+- Solid Cache / Queue / Cable
+
+## Local setup
+
+```bash
+bundle install
+bin/rails db:prepare
+bin/dev          # or: bin/rails server
+```
+
+- App: http://localhost:3000/
+- Health: http://localhost:3000/up
+
+```bash
+bundle exec rspec
+```
+
+Optional DB path override (used later for the OKE PVC mount):
+
+```bash
+SQLITE_DATABASE=/path/to/storage/development.sqlite3 bin/rails server
+```
+
+## Docker
+
+```bash
+docker build -t sitio .
+docker run --rm -p 80:80 \
+  -e RAILS_MASTER_KEY="$(cat config/master.key)" \
+  -e SQLITE_DATABASE=/rails/storage/production.sqlite3 \
+  sitio
+```
+
+## Docs
+
+- `docs/adr/` — architecture decisions
 - `.specs/project/PROJECT.md` — vision, scope, constraints
 - `.specs/project/ROADMAP.md` — milestone breakdown (M0–M5)
 - `.specs/project/STATE.md` — decisions, blockers, todos
-- `.specs/codebase/PORT-INVENTORY.md` — domain/route/schema inventory extracted from the current NestJS/React app, used as the parity checklist
-
-No application code yet — this repo is currently plan-only (M0 not started).
+- `.specs/codebase/PORT-INVENTORY.md` — parity checklist from the NestJS/React app
