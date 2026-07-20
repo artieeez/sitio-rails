@@ -5,14 +5,14 @@
 
 ## Problem Statement
 
-Before any domain feature (schools, trips, auth, Wix) can be built, we need a working Rails app skeleton wired to this project's specific stack choices: SQLite3 without WAL, Tailwind, Hotwire, and RSpec instead of Rails' Minitest default. Getting this foundation right once avoids rework across every later milestone.
+Before any domain feature (schools, trips, auth, Wix) can be built, we need a working Rails app skeleton wired to this project's specific stack choices: SQLite3 without WAL, Tailwind, Hotwire, and Minitest + fixtures (rails-dev / AD-004). Getting this foundation right once avoids rework across every later milestone.
 
 ## Goals
 
 - [x] A new Rails app boots locally and via Docker with zero errors
 - [x] SQLite3 is configured in default (non-WAL) journal mode, matching ADR-003
 - [x] Tailwind CSS and Hotwire (Turbo + Stimulus) are installed and render a real page
-- [x] RSpec replaces Minitest as the test framework and runs successfully
+- [x] Minitest + fixtures is the test framework and runs successfully (AD-004 superseded the earlier RSpec choice)
 - [x] A health check endpoint exists and is reachable without auth
 
 ## Out of Scope
@@ -31,7 +31,7 @@ Before any domain feature (schools, trips, auth, Wix) can be built, we need a wo
 
 ### P1: Boot a working Rails app locally and in Docker ⭐ MVP
 
-**User Story**: As the developer, I want a Rails app that boots cleanly with our chosen stack (SQLite, Tailwind, Hotwire, RSpec) so that every later milestone has a stable foundation to build on.
+**User Story**: As the developer, I want a Rails app that boots cleanly with our chosen stack (SQLite, Tailwind, Hotwire, Minitest) so that every later milestone has a stable foundation to build on.
 
 **Why P1**: Nothing else in the roadmap can start without this.
 
@@ -63,19 +63,19 @@ Before any domain feature (schools, trips, auth, Wix) can be built, we need a wo
 
 ---
 
-### P1: RSpec is the test framework ⭐ MVP
+### P1: Minitest is the test framework ⭐ MVP
 
-**User Story**: As the developer, I want RSpec configured instead of Minitest so that every later feature's tests follow one consistent framework (per STATE.md AD-004).
+**User Story**: As the developer, I want Minitest + fixtures so that every later feature's tests follow rails-dev / STATE.md AD-004.
 
 **Why P1**: Every subsequent milestone's Tasks/Execute phases need a working, agreed-upon test runner.
 
 **Acceptance Criteria**:
 
-1. WHEN `bundle exec rspec` runs on a fresh checkout THEN it SHALL execute successfully (even with zero or placeholder specs)
-2. WHEN `rails generate` is used for models/controllers THEN it SHALL generate RSpec spec files, not Minitest test files
-3. WHEN request specs are added later THEN `rails_helper.rb`/`spec_helper.rb` SHALL already be configured to support them (e.g., `rack-test` available)
+1. WHEN `bin/rails test` runs on a fresh checkout THEN it SHALL execute successfully
+2. WHEN `rails generate` is used for models/controllers THEN it SHALL generate Minitest test files and fixtures
+3. WHEN integration tests are added later THEN `test/test_helper.rb` SHALL already support them
 
-**Independent Test**: Generate a throwaway scaffold, confirm an RSpec spec file (not a Minitest test file) is generated, then delete the scaffold.
+**Independent Test**: Generate a throwaway scaffold, confirm a Minitest test file is generated, then delete the scaffold.
 
 ---
 
@@ -109,7 +109,7 @@ Before any domain feature (schools, trips, auth, Wix) can be built, we need a wo
 | SCAF-01 | P1: Boot locally + Docker | Implicit (Medium) | Done |
 | SCAF-02 | P1: Boot locally + Docker | Implicit (Medium) | Done |
 | SCAF-03 | P1: Tailwind + Hotwire | Implicit (Medium) | Done |
-| SCAF-04 | P1: RSpec | Implicit (Medium) | Done |
+| SCAF-04 | P1: Minitest | Implicit (Medium) | Done |
 | SCAF-05 | P2: Health check | Implicit (Medium) | Done |
 
 **Coverage:** 5 total, 5 implemented (delivered with M0 scaffold + auth demo dashboard)
@@ -122,5 +122,5 @@ Before any domain feature (schools, trips, auth, Wix) can be built, we need a wo
 - [x] Docker image builds and runs the same app
 - [x] SQLite confirmed in non-WAL journal mode
 - [x] Tailwind + Turbo + Stimulus all demonstrably working on one page
-- [x] `bundle exec rspec` runs clean on a fresh checkout
+- [x] `bin/rails test` runs clean on a fresh checkout
 - [x] `/up` health check reachable without auth

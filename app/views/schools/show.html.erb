@@ -1,0 +1,78 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <% if alert = flash[:alert] %>
+    <p class="py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block" id="alert"><%= alert %></p>
+  <% end %>
+
+  <% if notice = flash[:notice] %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-5">
+    <h1 class="font-bold text-4xl"><%= @school.display_title %></h1>
+    <%= link_to "Editar", edit_school_path(@school), class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
+  </div>
+
+  <dl class="space-y-3 text-sm mb-8">
+    <div>
+      <dt class="text-gray-500">Status</dt>
+      <dd class="text-gray-900">
+        <% if @school.deactivated? %>
+          Inativa
+        <% else %>
+          Ativa
+        <% end %>
+      </dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Loja Wix</dt>
+      <dd class="text-gray-900">
+        <% if @school.store_concealed? %>
+          Oculta
+        <% else %>
+          Visível
+        <% end %>
+      </dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Coleção Wix</dt>
+      <dd class="text-gray-900"><%= @school.wix_collection_id.presence || "—" %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">URL da página</dt>
+      <dd class="text-gray-900"><%= @school.url.presence || "—" %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Descrição</dt>
+      <dd class="text-gray-900 whitespace-pre-wrap"><%= @school.description.presence || "—" %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">URL da imagem</dt>
+      <dd class="text-gray-900 break-all"><%= @school.image_url.presence || "—" %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Favicon</dt>
+      <dd class="text-gray-900 break-all"><%= @school.favicon_url.presence || "—" %></dd>
+    </div>
+  </dl>
+
+  <div class="flex flex-wrap gap-4 text-sm mb-8">
+    <%= link_to "Viagens", school_trips_path(@school), class: "rounded-md px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
+    <% if @school.deactivated? %>
+      <%= button_to "Ativar", school_deactivation_path(@school), method: :delete, class: "rounded-md px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium cursor-pointer" %>
+    <% else %>
+      <%= button_to "Desativar", school_deactivation_path(@school), method: :post, class: "rounded-md px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium cursor-pointer" %>
+    <% end %>
+
+    <% if @school.store_concealed? %>
+      <%= button_to "Exibir na loja Wix", school_store_concealment_path(@school), method: :delete, class: "rounded-md px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium cursor-pointer" %>
+    <% else %>
+      <%= button_to "Ocultar na loja Wix", school_store_concealment_path(@school), method: :post, class: "rounded-md px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium cursor-pointer" %>
+    <% end %>
+
+    <%= link_to "Excluir permanentemente", school_deletion_path(@school), class: "rounded-md px-3.5 py-2 bg-red-50 hover:bg-red-100 text-red-700 font-medium" %>
+  </div>
+
+  <p class="text-sm">
+    <%= link_to "← Escolas", schools_path, class: "text-gray-700 underline hover:no-underline" %>
+  </p>
+</div>

@@ -1,0 +1,62 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <% if alert = flash[:alert] %>
+    <p class="py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block" id="alert"><%= alert %></p>
+  <% end %>
+
+  <% if notice = flash[:notice] %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-5">
+    <h1 class="font-bold text-4xl">Escolas</h1>
+    <%= link_to "Nova escola", new_school_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
+  </div>
+
+  <div class="mb-4 text-sm">
+    <% if @include_inactive %>
+      <%= link_to "Ocultar escolas inativas", schools_path, class: "text-gray-700 underline hover:no-underline" %>
+    <% else %>
+      <%= link_to "Incluir escolas inativas", schools_path(include_inactive: true), class: "text-gray-700 underline hover:no-underline" %>
+    <% end %>
+  </div>
+
+  <% if @schools.any? %>
+    <ul class="divide-y divide-gray-200 border border-gray-200 rounded-lg">
+      <% @schools.each do |school| %>
+        <li class="px-4 py-3">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p class="font-medium text-gray-900">
+                <%= link_to school.display_title, school, class: "underline hover:no-underline" %>
+              </p>
+              <p class="text-sm text-gray-500 mt-1">
+                <% if school.deactivated? %>
+                  Inativa
+                <% else %>
+                  Ativa
+                <% end %>
+                ·
+                <% if school.store_concealed? %>
+                  Oculta na loja
+                <% else %>
+                  Visível na loja
+                <% end %>
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-3 text-sm">
+              <%= link_to "Editar", edit_school_path(school), class: "text-gray-700 underline hover:no-underline" %>
+              <% if school.deactivated? %>
+                <%= button_to "Ativar", school_deactivation_path(school), method: :delete, class: "text-gray-700 underline hover:no-underline cursor-pointer" %>
+              <% else %>
+                <%= button_to "Desativar", school_deactivation_path(school), method: :post, class: "text-gray-700 underline hover:no-underline cursor-pointer" %>
+              <% end %>
+              <%= link_to "Excluir", school_deletion_path(school), class: "text-red-600 underline hover:no-underline" %>
+            </div>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-gray-600">Nenhuma escola ainda.</p>
+  <% end %>
+</div>

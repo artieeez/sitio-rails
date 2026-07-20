@@ -1,0 +1,17 @@
+maria:
+  trip: active
+  full_name: Maria Silva
+  cpf_normalized: "52998224725"
+  parent_name: Ana Silva
+  parent_phone_number: "51999999999"
+  parent_email: ana@example.com
+
+joao:
+  trip: active
+  full_name: João Souza
+  cpf_normalized: "39053344705"
+
+removed:
+  trip: active
+  full_name: Removido Costa
+  cpf_normalized: "11144477735"

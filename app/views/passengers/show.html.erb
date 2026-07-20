@@ -1,0 +1,54 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <% if notice = flash[:notice] %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-5">
+    <div>
+      <p class="text-sm text-gray-500 mb-1"><%= @trip.display_title %></p>
+      <h1 class="font-bold text-4xl"><%= @passenger.full_name %></h1>
+    </div>
+    <%= link_to "Editar", edit_trip_passenger_path(@trip, @passenger), class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
+  </div>
+
+  <dl class="space-y-3 text-sm mb-8">
+    <div>
+      <dt class="text-gray-500">CPF</dt>
+      <dd class="text-gray-900"><%= @passenger.cpf_display || "—" %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Responsável</dt>
+      <dd class="text-gray-900"><%= @passenger.parent_name.presence || "—" %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Telefone do responsável</dt>
+      <dd class="text-gray-900"><%= @passenger.parent_phone_number.presence || "—" %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">E-mail do responsável</dt>
+      <dd class="text-gray-900"><%= @passenger.parent_email.presence || "—" %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Valor esperado (centavos)</dt>
+      <dd class="text-gray-900"><%= @passenger.expected_amount_minor.presence || "—" %></dd>
+    </div>
+  </dl>
+
+  <div class="flex flex-wrap gap-4 text-sm mb-8">
+    <% if @passenger.manually_settled? %>
+      <%= button_to "Desmarcar pago manual", passenger_manual_settlement_path(@passenger), method: :delete, class: "rounded-md px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium cursor-pointer" %>
+    <% else %>
+      <%= button_to "Marcar pago (sem informações)", passenger_manual_settlement_path(@passenger), method: :post, class: "rounded-md px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium cursor-pointer" %>
+    <% end %>
+
+    <% if @passenger.removed? %>
+      <%= button_to "Restaurar", passenger_removal_path(@passenger), method: :delete, class: "rounded-md px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium cursor-pointer" %>
+    <% else %>
+      <%= button_to "Excluir", passenger_removal_path(@passenger), method: :post, class: "rounded-md px-3.5 py-2 bg-red-50 hover:bg-red-100 text-red-700 font-medium cursor-pointer" %>
+    <% end %>
+  </div>
+
+  <p class="text-sm">
+    <%= link_to "← Passageiros", trip_passengers_path(@trip), class: "text-gray-700 underline hover:no-underline" %>
+  </p>
+</div>

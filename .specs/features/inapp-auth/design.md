@@ -63,7 +63,7 @@ graph TD
 
 | System | Integration Method |
 |---|---|
-| `rails-app-scaffold` feature (SQLite/RSpec setup) | This feature's migrations run against the scaffold's SQLite DB; `bundle exec rspec` (from SCAF-04) is the test runner for all specs below |
+| `rails-app-scaffold` feature (SQLite/Minitest setup) | This feature's migrations run against the scaffold's SQLite DB; `bin/rails test` (from SCAF-04) is the test runner for all tests below |
 | Health check (SCAF-05) | `HealthController` must call `allow_unauthenticated_access` — cross-reference when scaffold's health route is implemented |
 | Future Wix webhooks (M2) | Will use the same `allow_unauthenticated_access` mechanism, but with JWT verification instead of a session — not built here, just keeping the door open |
 | Future audit log (M4) | `Current.user` is the natural actor reference for audit entries — no coupling needed now, just don't rename this later |
@@ -188,7 +188,7 @@ end
 | Role storage | `role:integer` ActiveRecord `enum`, default `member` | Cheapest possible 2-value model; avoids a separate `roles`/join table that ADR-002 explicitly says is overbuilt for now |
 | Rate limit numbers | `to: 5, within: 15.minutes` on `SessionsController#create` | Fills the "agent's discretion" gap from context.md; tighter than the Rails guide's own example (`10 / 3.minutes`) since this app has no self-service signup to generate legitimate retry traffic |
 | Session expiry | Not implemented as a custom fixed-expiry mechanism in M0; generated `Session` rows persist until explicit logout | **Open question carried forward, not fully resolved here** — see below |
-| First-admin bootstrap gating | Model-level check (`User.count.zero?`) in the controller, not a Rails initializer/rake task | Keeps it inside normal request/response + RSpec request-spec testing, no separate ops step to remember |
+| First-admin bootstrap gating | Model-level check (`User.count.zero?`) in the controller, not a Rails initializer/rake task | Keeps it inside normal request/response + Minitest integration testing, no separate ops step to remember |
 | Password reset (P3) | Generated `PasswordsController` + `PasswordsMailer` kept, but actual mail delivery (SMTP config) is out of scope for M0 | Matches spec.md's P3 framing — mechanism exists, "TBD" on whether it's wired before cutover |
 
 ### Open question not fully resolved: fixed session expiry mechanism

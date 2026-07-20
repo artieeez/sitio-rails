@@ -4,7 +4,7 @@
 **Testing conventions**: `.specs/codebase/TESTING.md`
 **Status**: Done
 
-**Prerequisite (external, not a task here):** `rails-app-scaffold` must be executed first — this feature assumes a booting Rails app with SQLite/Tailwind/Hotwire/RSpec already in place.
+**Prerequisite (external, not a task here):** `rails-app-scaffold` must be executed first — this feature assumes a booting Rails app with SQLite/Tailwind/Hotwire/Minitest already in place.
 
 ---
 
@@ -51,7 +51,7 @@ T6 → T8
 - [x] Generator runs without error; `bcrypt` present in `Gemfile.lock`
 - [x] `bin/rails db:migrate` creates `users` and `sessions` tables
 - [x] `bin/rails server` still boots (no regression from SCAF-01)
-- [x] Gate check passes: `bundle exec rspec` (full — first run after generator, confirm zero failures even with no new specs yet)
+- [x] Gate check passes: `bin/rails test` (full — first run after generator, confirm zero failures even with no new specs yet)
 
 **Tests**: none (merged forward — model spec → T2, session login/logout request spec → T5, per the coverage matrix's "no direct spec unless non-trivial" + merge-forward rule for freshly-generated framework code)
 **Gate**: full
@@ -63,7 +63,7 @@ T6 → T8
 ### T2: Add `role` enum to User
 
 **What**: Add a migration for `role:integer, null: false, default: 0` on `users`; add `enum :role, { member: 0, admin: 1 }` + presence validation to `app/models/user.rb`; write the first model specs (covering both the generated `has_secure_password` behavior and the new role).
-**Where**: `db/migrate/xxx_add_role_to_users.rb`, `app/models/user.rb`, `spec/models/user_spec.rb`
+**Where**: `db/migrate/xxx_add_role_to_users.rb`, `app/models/user.rb`, `test/models/user_test.rb`
 **Depends on**: T1
 **Reuses**: Generated `User` model (extends, doesn't replace)
 **Requirement**: AUTH-06, AUTH-07 (data shape), spec.md P1 "Two roles"
@@ -76,7 +76,7 @@ T6 → T8
 - [x] Migration adds `role` column, backfills default `member` (0) for any existing rows
 - [x] `User#admin?` / `User#member?` work; invalid role value is rejected at the model level
 - [x] `User.authenticate_by` (generated) still works unchanged
-- [x] Gate check passes: `bundle exec rspec spec/models/user_spec.rb`
+- [x] Gate check passes: `bin/rails test test/models/user_test.rb`
 - [x] Test count: at least 5 examples pass (valid user, default role, admin?/member? predicates, invalid role rejected, authenticate_by still works)
 
 **Tests**: unit
@@ -84,7 +84,7 @@ T6 → T8
 
 **Verify**:
 ```bash
-bundle exec rspec spec/models/user_spec.rb
+bin/rails test test/models/user_test.rb
 ```
 Expect all examples green, 0 failures.
 
@@ -107,7 +107,7 @@ Expect all examples green, 0 failures.
 **Done when**:
 - [x] `Authorization` concern defines `require_admin!` as a callable `before_action`
 - [x] No standalone spec added here (per TESTING.md matrix: concerns are exercised through their first real consumer)
-- [x] Gate check passes: `bundle exec rspec` boots without new failures (nothing to exercise yet)
+- [x] Gate check passes: `bin/rails test` boots without new failures (nothing to exercise yet)
 
 **Tests**: none (matrix-justified — exercised via T6's request specs, the first controller to include this concern; NOT a deferral, this is what the coverage matrix specifies for concerns)
 **Gate**: quick
@@ -119,7 +119,7 @@ Expect all examples green, 0 failures.
 ### T4: RegistrationsController — first-admin bootstrap [P]
 
 **What**: Create `RegistrationsController#new/create`, reachable only while `User.count.zero?`; `create` builds the first `User` with `role: :admin` and starts a session (reusing the same session-start pattern as `SessionsController`). Any request when `User.count > 0` redirects to the login page instead of creating a user or 404ing. Add Tailwind-styled view and route.
-**Where**: `app/controllers/registrations_controller.rb`, `app/views/registrations/new.html.erb`, `config/routes.rb` (add `resource :registration, only: %i[new create]`), `spec/requests/registrations_spec.rb`
+**Where**: `app/controllers/registrations_controller.rb`, `app/views/registrations/new.html.erb`, `config/routes.rb` (add `resource :registration, only: %i[new create]`), `test/integration/registrations_test.rb`
 **Depends on**: T1, T2
 **Reuses**: `User` model validations (T2); `start_new_session_for` pattern from the generated `SessionsController` (T1); `allow_unauthenticated_access` from the generated `Authentication` concern (T1)
 **Requirement**: AUTH-10, AUTH-11, AUTH-12
@@ -131,7 +131,7 @@ Expect all examples green, 0 failures.
 **Done when**:
 - [x] On a fresh (zero-user) DB, visiting the registration form and submitting valid data creates exactly one `admin`-role user and logs them in
 - [x] With one or more existing users, `GET`/`POST` to the registration routes redirect to the login page and create no user
-- [x] Gate check passes: `bundle exec rspec spec/requests/registrations_spec.rb`
+- [x] Gate check passes: `bin/rails test test/integration/registrations_test.rb`
 - [x] Test count: at least 3 examples pass (bootstrap succeeds when empty, blocked when not empty, created user has admin role)
 
 **Tests**: integration
@@ -139,7 +139,7 @@ Expect all examples green, 0 failures.
 
 **Verify**:
 ```bash
-bundle exec rspec spec/requests/registrations_spec.rb
+bin/rails test test/integration/registrations_test.rb
 ```
 Expect all examples green, 0 failures.
 
@@ -150,7 +150,7 @@ Expect all examples green, 0 failures.
 ### T5: Rate-limit login attempts [P]
 
 **What**: Add `rate_limit to: 5, within: 15.minutes, only: :create` to the generated `SessionsController`. Add the first request specs for the login/logout flow itself (deferred forward from T1): valid login, invalid login (generic error, no session), logout, and the rate limit triggering on the 6th rapid attempt.
-**Where**: `app/controllers/sessions_controller.rb`, `spec/requests/sessions_spec.rb`
+**Where**: `app/controllers/sessions_controller.rb`, `test/integration/sessions_test.rb`
 **Depends on**: T1
 **Reuses**: Generated `SessionsController` body (`authenticate_by`, `start_new_session_for`) — only the `rate_limit` line is new
 **Requirement**: AUTH-01, AUTH-02, AUTH-03, AUTH-04 (login/logout portion), context.md's failed-login decision
@@ -164,7 +164,7 @@ Expect all examples green, 0 failures.
 - [x] Invalid credentials show a generic error, no session established
 - [x] Logout destroys the session and redirects to login
 - [x] The 6th login attempt within 15 minutes (from the same IP) is rejected distinctly from a normal invalid-credentials response (429 or redirect, still generic wording)
-- [x] Gate check passes: `bundle exec rspec spec/requests/sessions_spec.rb`
+- [x] Gate check passes: `bin/rails test test/integration/sessions_test.rb`
 - [x] Test count: at least 4 examples pass
 
 **Tests**: integration
@@ -172,7 +172,7 @@ Expect all examples green, 0 failures.
 
 **Verify**:
 ```bash
-bundle exec rspec spec/requests/sessions_spec.rb
+bin/rails test test/integration/sessions_test.rb
 ```
 Expect all examples green, 0 failures.
 
@@ -183,7 +183,7 @@ Expect all examples green, 0 failures.
 ### T6: Admin::UsersController — admin-only member/admin creation
 
 **What**: Resourceful controller (`index`, `new`, `create`, `edit`, `update`) under `Admin::` namespace, gated by `require_admin!` (from T3). Admin sets email/password/role directly at creation (no emailed invite in M0, per context.md — SMTP isn't configured). Tailwind views + `namespace :admin do resources :users end` route.
-**Where**: `app/controllers/admin/users_controller.rb`, `app/views/admin/users/*`, `config/routes.rb`, `spec/requests/admin/users_spec.rb`
+**Where**: `app/controllers/admin/users_controller.rb`, `app/views/admin/users/*`, `config/routes.rb`, `test/integration/admin/users_test.rb`
 **Depends on**: T2, T3
 **Reuses**: `User` model validations (T2); `Authorization#require_admin!` (T3, first real consumer — this is where T3's concern gets exercised)
 **Requirement**: AUTH-06, AUTH-07, AUTH-08, AUTH-09, AUTH-13, AUTH-14
@@ -196,7 +196,7 @@ Expect all examples green, 0 failures.
 - [x] An admin user can create both `member`- and `admin`-role accounts via the UI
 - [x] A `member`-role user hitting any `Admin::UsersController` action is denied (403/redirect), no admin-only content leaked
 - [x] A newly created member account can immediately log in with the credentials set by the admin
-- [x] Gate check passes: `bundle exec rspec spec/requests/admin/users_spec.rb`
+- [x] Gate check passes: `bin/rails test test/integration/admin/users_test.rb`
 - [x] Test count: at least 4 examples pass (admin creates member, admin creates admin, member denied, new member can log in)
 
 **Tests**: integration
@@ -204,7 +204,7 @@ Expect all examples green, 0 failures.
 
 **Verify**:
 ```bash
-bundle exec rspec spec/requests/admin/users_spec.rb
+bin/rails test test/integration/admin/users_test.rb
 ```
 Expect all examples green, 0 failures.
 
@@ -215,7 +215,7 @@ Expect all examples green, 0 failures.
 ### T7: Fixed session expiry (`expires_at`) [P]
 
 **What**: Resolve design.md's open question. Add `expires_at:datetime` to the `sessions` table, default it to `created_at + 14.days` on creation (matches context.md's "fixed expiry" decision). Modify the generated `Authentication` concern's session-resumption logic to treat an expired session the same as no session (destroy or ignore it, redirect to login) rather than fabricating a different mechanism.
-**Where**: `db/migrate/xxx_add_expires_at_to_sessions.rb`, `app/models/session.rb`, `app/controllers/concerns/authentication.rb`, `spec/models/session_spec.rb`, `spec/requests/session_expiry_spec.rb`
+**Where**: `db/migrate/xxx_add_expires_at_to_sessions.rb`, `app/models/session.rb`, `app/controllers/concerns/authentication.rb`, `test/models/session_test.rb`, `test/integration/session_expiry_test.rb`
 **Depends on**: T1
 **Reuses**: Generated `Session`/`Current`/`Authentication` — modifies session resumption only, doesn't replace the mechanism
 **Requirement**: context.md session-lifetime decision (resolves the STATE.md "session-expiry mechanism" todo)
@@ -228,7 +228,7 @@ Expect all examples green, 0 failures.
 - [x] New sessions get `expires_at` set to 14 days from creation
 - [x] A request presenting an expired session is treated as unauthenticated (redirected to login), and the expired `Session` row is cleaned up (destroyed) rather than left indefinitely valid
 - [x] A request presenting a non-expired session continues to work normally
-- [x] Gate check passes: `bundle exec rspec spec/models/session_spec.rb spec/requests/session_expiry_spec.rb`
+- [x] Gate check passes: `bin/rails test test/models/session_test.rb test/integration/session_expiry_test.rb`
 - [x] Test count: at least 3 examples pass (expiry set on create, expired session rejected, valid session accepted)
 
 **Tests**: unit + integration
@@ -236,7 +236,7 @@ Expect all examples green, 0 failures.
 
 **Verify**:
 ```bash
-bundle exec rspec spec/models/session_spec.rb spec/requests/session_expiry_spec.rb
+bin/rails test test/models/session_test.rb test/integration/session_expiry_test.rb
 ```
 Expect all examples green, 0 failures.
 
@@ -247,7 +247,7 @@ Expect all examples green, 0 failures.
 ### T8: Protected demo pages (default-deny + admin-only proof)
 
 **What**: Add a minimal authenticated dashboard/root page (no `allow_unauthenticated_access` — proves AUTH-04's default-deny) with a nav showing the logged-in user's email/role and a logout link, plus one admin-only demo action using `require_admin!` (from T3). This is the "Independent Test" fixture the spec.md stories call for.
-**Where**: `app/controllers/dashboard_controller.rb`, `app/views/dashboard/*`, `config/routes.rb` (root route), `spec/requests/dashboard_spec.rb`
+**Where**: `app/controllers/dashboard_controller.rb`, `app/views/dashboard/*`, `config/routes.rb` (root route), `test/integration/dashboard_test.rb`
 **Depends on**: T1, T3
 **Reuses**: Generated `Authentication` concern's default-deny behavior (T1); `Authorization#require_admin!` (T3)
 **Requirement**: AUTH-04, AUTH-06, AUTH-07, AUTH-08
@@ -260,7 +260,7 @@ Expect all examples green, 0 failures.
 - [x] An unauthenticated request to the dashboard redirects to login
 - [x] A logged-in `member` is denied the admin-only demo action
 - [x] A logged-in `admin` is allowed the admin-only demo action
-- [x] Gate check passes: `bundle exec rspec` (full — this is the last task in the feature, run the whole suite)
+- [x] Gate check passes: `bin/rails test` (full — this is the last task in the feature, run the whole suite)
 - [x] Test count: at least 3 examples pass, and total suite test count matches the sum of all tasks' "Test count" minimums with zero unexplained deletions
 
 **Tests**: integration
@@ -268,7 +268,7 @@ Expect all examples green, 0 failures.
 
 **Verify**:
 ```bash
-bundle exec rspec
+bin/rails test
 ```
 Expect all examples green, 0 failures, total example count ≥ 5 (T2) + 3 (T4) + 4 (T5) + 4 (T6) + 3 (T7) + 3 (T8) = 22.
 

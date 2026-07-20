@@ -1,7 +1,7 @@
 # Roadmap
 
-**Current Milestone:** M0 — Rails Bootstrap & In-App Auth
-**Status:** Done
+**Current Milestone:** M1 — Core Domain: Schools → Trips → Passengers → Payments
+**Status:** In progress (Schools done)
 
 Parity checklist source: `.specs/codebase/PORT-INVENTORY.md`. Cutover is big-bang (ADR-001/003): old NestJS/React stack stays live and is the parity reference until M5 ships, then it's retired in one change.
 
@@ -18,10 +18,10 @@ Parity checklist source: `.specs/codebase/PORT-INVENTORY.md`. Cutover is big-ban
 **Rails app scaffold** - DONE (T1 scaffold commit + M0 verification; spec requirements complete)
 
 - New Rails app in `sitio-rails`, SQLite3 (no WAL), Tailwind + Hotwire installed
-- RSpec installed and wired as the test framework
+- Minitest + fixtures (AD-004 / AD-006; RSpec removed)
 - Dockerfile + basic health check route
 
-**In-app authentication (ADR-002)** - DONE (T1–T8 complete; 27 examples, 0 failures)
+**In-app authentication (ADR-002)** - DONE (T1–T8 complete; suite green under Minitest)
 
 - `User` model with `has_secure_password`, `admin`/`member` role
 - Login/logout, session cookie, CSRF
@@ -38,20 +38,25 @@ Parity checklist source: `.specs/codebase/PORT-INVENTORY.md`. Cutover is big-ban
 
 ### Features
 
-**Schools** - PLANNED
+**Schools** - DONE
 
-- CRUD, activate/deactivate, delete-eligibility check
-- Hotwire pages: directory, new, edit
+- CRUD, deactivate/activate via `School::Deactivation`, store hide/show via `School::StoreConcealment`
+- Hard delete via nested `deletion` resource (Wix product-count gate deferred to M2)
+- Hotwire pages: directory, new, show, edit (pt-BR)
 
-**Trips** - PLANNED
+**Trips** - DONE
 
-- CRUD nested under School, passenger-status aggregates, delete-eligibility, expiration date + scheduled expiration job
-- Hotwire pages: list under school, new, summary
+- CRUD nested under School; deactivate/activate + store conceal via shared concerns
+- Hard delete via nested `deletion` (blocked when passengers exist; Wix order gate deferred to M2)
+- Hourly Solid Queue job conceals expired store-visible trips locally
+- Hotwire pages: list under school, new, show, edit (pt-BR)
 
-**Passengers** - PLANNED
+**Passengers** - DONE
 
-- CRUD nested under Trip, CPF uniqueness (incl. soft-deleted), soft-remove, `manual_paid_without_info`, `needs_review`
-- Hotwire pages: list, new, edit
+- CRUD nested under Trip; CPF normalize/validate; name-duplicate confirm checkbox
+- Soft-remove via `Passenger::Removal`; manual paid via `Passenger::ManualSettlement`
+- Hotwire pages: list, new, show, edit (pt-BR)
+- Payment-derived status aggregates deferred until Payments
 
 **Payments** - PLANNED
 

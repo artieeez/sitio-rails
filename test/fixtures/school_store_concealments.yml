@@ -1,0 +1,7 @@
+concealed_school:
+  school: concealed
+  user: admin
+
+inactive_school:
+  school: inactive
+  user: admin

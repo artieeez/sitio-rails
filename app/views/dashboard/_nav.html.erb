@@ -5,6 +5,7 @@
     <span><%= Current.user.role.humanize %></span>
   </div>
   <div class="flex flex-wrap items-center gap-4 text-sm">
+    <%= link_to "Escolas", schools_path, class: "text-gray-700 underline hover:no-underline" %>
     <% if Current.user.admin? %>
       <%= link_to "Users", admin_users_path, class: "text-gray-700 underline hover:no-underline" %>
       <%= link_to "Admin demo", dashboard_admin_demo_path, class: "text-gray-700 underline hover:no-underline" %>

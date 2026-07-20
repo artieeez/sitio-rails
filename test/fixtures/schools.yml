@@ -1,0 +1,13 @@
+active:
+  title: Escola Ativa
+  description: Escola ativa e visível na loja
+  url: https://example.com/ativa
+  wix_collection_id: collection-active
+
+inactive:
+  title: Escola Inativa
+  description: Escola desativada
+
+concealed:
+  title: Escola Oculta
+  description: Ativa no app, oculta na loja

@@ -25,7 +25,7 @@
 - Hotwire (Turbo + Stimulus) + Tailwind CSS — UI, no SPA/public JSON API
 - Rails built-in auth (`has_secure_password` / session cookies) — email/password, `admin` + `member` roles, no external IdP
 - Background jobs: Solid Queue (or equivalent DB-backed queue) — async Wix webhook event processing, replacing the current in-process Nest queue
-- RSpec — test framework (request specs for controllers/webhooks, model specs for domain logic)
+- Minitest + fixtures — test framework (per STATE.md AD-004 / AD-006; rails-dev)
 - Wix APIs — Stores Catalog v1 (collections/products), eCom Orders, Payments webhooks (JWT-verified)
 
 ## Scope

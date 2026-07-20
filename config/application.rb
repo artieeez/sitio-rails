@@ -12,7 +12,7 @@ require "action_mailbox/engine"
 require "action_text/engine"
 require "action_view/railtie"
 require "action_cable/engine"
-# require "rails/test_unit/railtie"
+require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -39,15 +39,9 @@ module Sitio
     # Don't generate system test files.
     config.generators.system_tests = nil
 
-    # Prefer RSpec over Minitest for generated specs (STATE.md AD-004).
+    # Minitest + fixtures (see .claude/skills/rails-dev/references/test.md).
     config.generators do |g|
-      g.test_framework :rspec,
-        fixtures: false,
-        view_specs: false,
-        helper_specs: false,
-        routing_specs: false,
-        request_specs: true,
-        controller_specs: false
+      g.test_framework :test_unit, fixture: true
     end
   end
 end

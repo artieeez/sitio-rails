@@ -1,0 +1,47 @@
+<%= form_with model: school, class: "space-y-4" do |form| %>
+  <% if school.errors.any? %>
+    <div class="py-2 px-3 bg-red-50 text-red-600 rounded-lg" id="error_explanation">
+      <h2 class="font-medium"><%= pluralize(school.errors.count, "erro") %> impedem salvar:</h2>
+      <ul class="list-disc ml-5 mt-1 text-sm">
+        <% school.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :wix_collection_id, "Coleção Wix", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.text_field :wix_collection_id, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= form.label :url, "URL da página (apenas favicon)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.url_field :url, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= form.label :title, "Título", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.text_field :title, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= form.label :description, "Descrição", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.text_area :description, rows: 4, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= form.label :image_url, "URL da imagem", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.url_field :image_url, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= form.label :favicon_url, "Favicon", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.url_field :favicon_url, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  </div>
+
+  <div class="flex flex-wrap gap-3 pt-2">
+    <%= form.submit "Salvar", class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium cursor-pointer" %>
+    <%= link_to "Cancelar", schools_path, class: "rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium" %>
+  </div>
+<% end %>

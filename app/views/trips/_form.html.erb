@@ -1,0 +1,48 @@
+<%= form_with model: [school, trip], class: "space-y-4" do |form| %>
+  <% if trip.errors.any? %>
+    <div class="py-2 px-3 bg-red-50 text-red-600 rounded-lg" id="error_explanation">
+      <h2 class="font-medium"><%= pluralize(trip.errors.count, "erro") %> impedem salvar:</h2>
+      <ul class="list-disc ml-5 mt-1 text-sm">
+        <% trip.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :wix_product_id, "Produto Wix", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.text_field :wix_product_id, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= form.label :default_expected_amount_minor, "Valor esperado padrão (centavos)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.number_field :default_expected_amount_minor, min: 0, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= form.label :title, "Título", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.text_field :title, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= form.label :description, "Descrição", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.text_area :description, rows: 4, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  </div>
+
+  <div>
+    <%= form.label :expiration_date, "Data de expiração", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.datetime_local_field :expiration_date, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+    <p class="text-xs text-gray-500 mt-1">Após esta data a viagem é ocultada da loja Wix, mas continua no painel.</p>
+  </div>
+
+  <div>
+    <%= form.label :image_url, "URL da imagem", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <%= form.url_field :image_url, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  </div>
+
+  <div class="flex flex-wrap gap-3 pt-2">
+    <%= form.submit "Salvar", class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium cursor-pointer" %>
+    <%= link_to "Cancelar", school_trips_path(school), class: "rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium" %>
+  </div>
+<% end %>

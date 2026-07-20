@@ -63,4 +63,4 @@ UI copy is Portuguese (pt-BR) — carry over.
 
 - Backend: Jest + Supertest e2e, co-located specs, coverage floor ~5% (known gap, not a target to replicate)
 - Dashboard: Vitest + Testing Library, ~44% statements
-- Rails will use RSpec (request specs + model specs) — see ROADMAP.md gates per milestone
+- Rails uses Minitest + fixtures (request/integration + model tests) — see ROADMAP.md / STATE.md AD-004

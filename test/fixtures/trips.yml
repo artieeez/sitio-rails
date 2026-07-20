@@ -1,0 +1,17 @@
+active:
+  school: active
+  title: Viagem Ativa
+  description: Viagem ativa e visível
+  default_expected_amount_minor: 15000
+  wix_product_id: product-active
+
+inactive:
+  school: active
+  title: Viagem Inativa
+  description: Viagem desativada
+
+expired:
+  school: active
+  title: Viagem Expirada
+  description: Ainda visível na loja mas com data passada
+  expiration_date: <%= 1.day.ago %>

@@ -51,9 +51,6 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
-
-  # RSpec (STATE.md AD-004) — replaces Minitest as the test framework
-  gem "rspec-rails", "~> 8.0"
 end
 
 group :development do

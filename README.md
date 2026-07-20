@@ -7,7 +7,7 @@ Ruby on Rails rewrite of Sitio (school-trip payment management), replacing the N
 - Ruby 4.0 / Rails 8.1
 - SQLite3 (rollback journal, no WAL — ADR-003)
 - Hotwire (Turbo + Stimulus) + Tailwind CSS
-- RSpec
+- Minitest + fixtures
 - Solid Cache / Queue / Cable
 
 ## Local setup
@@ -22,7 +22,7 @@ bin/dev          # or: bin/rails server
 - Health: http://localhost:3000/up
 
 ```bash
-bundle exec rspec
+bin/rails test
 ```
 
 Optional DB path override (used later for the OKE PVC mount):

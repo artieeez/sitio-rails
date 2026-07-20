@@ -1,0 +1,71 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <% if alert = flash[:alert] %>
+    <p class="py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block" id="alert"><%= alert %></p>
+  <% end %>
+
+  <% if notice = flash[:notice] %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-5">
+    <div>
+      <p class="text-sm text-gray-500 mb-1"><%= @school.display_title %></p>
+      <h1 class="font-bold text-4xl"><%= @trip.display_title %></h1>
+    </div>
+    <%= link_to "Editar", edit_school_trip_path(@school, @trip), class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
+  </div>
+
+  <dl class="space-y-3 text-sm mb-8">
+    <div>
+      <dt class="text-gray-500">Status</dt>
+      <dd class="text-gray-900"><%= @trip.deactivated? ? "Inativa" : "Ativa" %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Loja Wix</dt>
+      <dd class="text-gray-900"><%= @trip.store_concealed? ? "Oculta" : "Visível" %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Produto Wix</dt>
+      <dd class="text-gray-900"><%= @trip.wix_product_id.presence || "—" %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Valor esperado padrão (centavos)</dt>
+      <dd class="text-gray-900"><%= @trip.default_expected_amount_minor.presence || "—" %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Data de expiração</dt>
+      <dd class="text-gray-900">
+        <% if @trip.expiration_date.present? %>
+          <%= l(@trip.expiration_date, format: :long) %>
+        <% else %>
+          —
+        <% end %>
+      </dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Descrição</dt>
+      <dd class="text-gray-900 whitespace-pre-wrap"><%= @trip.description.presence || "—" %></dd>
+    </div>
+  </dl>
+
+  <div class="flex flex-wrap gap-4 text-sm mb-8">
+    <%= link_to "Passageiros", trip_passengers_path(@trip), class: "rounded-md px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
+    <% if @trip.deactivated? %>
+      <%= button_to "Ativar", trip_deactivation_path(@trip), method: :delete, class: "rounded-md px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium cursor-pointer" %>
+    <% else %>
+      <%= button_to "Desativar", trip_deactivation_path(@trip), method: :post, class: "rounded-md px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium cursor-pointer" %>
+    <% end %>
+
+    <% if @trip.store_concealed? %>
+      <%= button_to "Exibir na loja Wix", trip_store_concealment_path(@trip), method: :delete, class: "rounded-md px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium cursor-pointer" %>
+    <% else %>
+      <%= button_to "Ocultar na loja Wix", trip_store_concealment_path(@trip), method: :post, class: "rounded-md px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium cursor-pointer" %>
+    <% end %>
+
+    <%= link_to "Excluir permanentemente", trip_deletion_path(@trip), class: "rounded-md px-3.5 py-2 bg-red-50 hover:bg-red-100 text-red-700 font-medium" %>
+  </div>
+
+  <p class="text-sm">
+    <%= link_to "← Viagens", school_trips_path(@school), class: "text-gray-700 underline hover:no-underline" %>
+  </p>
+</div>
