@@ -18,9 +18,65 @@
     "tlc-spec-driven": {
       "name": "tlc-spec-driven",
       "source": "local",
-      "contentHash": "69867b0e19be1fb556d2e697f0f18f1de0363d1aa2de9d36754d5b107156357c",
+      "contentHash": "e3d5c4dec38bff044207b31229fb28114d5fdb79f2c7200f3ec49a13a70024e1",
       "installedAt": "2026-07-15T23:12:19.404Z",
-      "updatedAt": "2026-07-15T23:12:19.414Z",
+      "updatedAt": "2026-07-20T21:04:04.027Z",
+      "agents": [
+        "cursor",
+        "claude-code",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "rails-dev": {
+      "name": "rails-dev",
+      "source": "local",
+      "contentHash": "472d78e9b2b7a55d696be5c96196ec8ecb8967e12469456b79acbe84c1db8098",
+      "installedAt": "2026-07-20T21:03:03.592Z",
+      "updatedAt": "2026-07-20T21:03:03.619Z",
+      "agents": [
+        "cursor",
+        "claude-code",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "coding-guidelines": {
+      "name": "coding-guidelines",
+      "source": "local",
+      "contentHash": "28a414c715d3c41aae28a25e2f109813ec3f246f76b5567c1e7d6a128cd289ff",
+      "installedAt": "2026-07-20T21:04:30.700Z",
+      "updatedAt": "2026-07-20T21:04:30.712Z",
+      "agents": [
+        "cursor",
+        "claude-code",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "the-fool": {
+      "name": "the-fool",
+      "source": "local",
+      "contentHash": "b761f983e21e00173ac42760f478095a3e8c733862c20d9f711d10d962f407cc",
+      "installedAt": "2026-07-20T21:05:18.916Z",
+      "updatedAt": "2026-07-20T21:05:18.933Z",
+      "agents": [
+        "cursor",
+        "claude-code",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "pr-review": {
+      "name": "pr-review",
+      "source": "local",
+      "contentHash": "5eea41261c6c595a095e905e7608fc8c7f038301067a93c49a7cc98201500601",
+      "installedAt": "2026-07-20T21:05:37.289Z",
+      "updatedAt": "2026-07-20T21:05:37.296Z",
       "agents": [
         "cursor",
         "claude-code"

@@ -59,4 +59,7 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # Process manager for bin/dev (web + Tailwind watch)
+  gem "foreman", require: false
 end
