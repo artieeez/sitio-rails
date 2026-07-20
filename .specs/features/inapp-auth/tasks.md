@@ -2,7 +2,7 @@
 
 **Design**: `.specs/features/inapp-auth/design.md`
 **Testing conventions**: `.specs/codebase/TESTING.md`
-**Status**: Draft
+**Status**: Done
 
 **Prerequisite (external, not a task here):** `rails-app-scaffold` must be executed first — this feature assumes a booting Rails app with SQLite/Tailwind/Hotwire/RSpec already in place.
 
@@ -48,10 +48,10 @@ T6 → T8
 - Skill: NONE
 
 **Done when**:
-- [ ] Generator runs without error; `bcrypt` present in `Gemfile.lock`
-- [ ] `bin/rails db:migrate` creates `users` and `sessions` tables
-- [ ] `bin/rails server` still boots (no regression from SCAF-01)
-- [ ] Gate check passes: `bundle exec rspec` (full — first run after generator, confirm zero failures even with no new specs yet)
+- [x] Generator runs without error; `bcrypt` present in `Gemfile.lock`
+- [x] `bin/rails db:migrate` creates `users` and `sessions` tables
+- [x] `bin/rails server` still boots (no regression from SCAF-01)
+- [x] Gate check passes: `bundle exec rspec` (full — first run after generator, confirm zero failures even with no new specs yet)
 
 **Tests**: none (merged forward — model spec → T2, session login/logout request spec → T5, per the coverage matrix's "no direct spec unless non-trivial" + merge-forward rule for freshly-generated framework code)
 **Gate**: full
@@ -73,11 +73,11 @@ T6 → T8
 - Skill: NONE
 
 **Done when**:
-- [ ] Migration adds `role` column, backfills default `member` (0) for any existing rows
-- [ ] `User#admin?` / `User#member?` work; invalid role value is rejected at the model level
-- [ ] `User.authenticate_by` (generated) still works unchanged
-- [ ] Gate check passes: `bundle exec rspec spec/models/user_spec.rb`
-- [ ] Test count: at least 5 examples pass (valid user, default role, admin?/member? predicates, invalid role rejected, authenticate_by still works)
+- [x] Migration adds `role` column, backfills default `member` (0) for any existing rows
+- [x] `User#admin?` / `User#member?` work; invalid role value is rejected at the model level
+- [x] `User.authenticate_by` (generated) still works unchanged
+- [x] Gate check passes: `bundle exec rspec spec/models/user_spec.rb`
+- [x] Test count: at least 5 examples pass (valid user, default role, admin?/member? predicates, invalid role rejected, authenticate_by still works)
 
 **Tests**: unit
 **Gate**: quick
@@ -105,9 +105,9 @@ Expect all examples green, 0 failures.
 - Skill: NONE
 
 **Done when**:
-- [ ] `Authorization` concern defines `require_admin!` as a callable `before_action`
-- [ ] No standalone spec added here (per TESTING.md matrix: concerns are exercised through their first real consumer)
-- [ ] Gate check passes: `bundle exec rspec` boots without new failures (nothing to exercise yet)
+- [x] `Authorization` concern defines `require_admin!` as a callable `before_action`
+- [x] No standalone spec added here (per TESTING.md matrix: concerns are exercised through their first real consumer)
+- [x] Gate check passes: `bundle exec rspec` boots without new failures (nothing to exercise yet)
 
 **Tests**: none (matrix-justified — exercised via T6's request specs, the first controller to include this concern; NOT a deferral, this is what the coverage matrix specifies for concerns)
 **Gate**: quick
@@ -129,10 +129,10 @@ Expect all examples green, 0 failures.
 - Skill: NONE
 
 **Done when**:
-- [ ] On a fresh (zero-user) DB, visiting the registration form and submitting valid data creates exactly one `admin`-role user and logs them in
-- [ ] With one or more existing users, `GET`/`POST` to the registration routes redirect to the login page and create no user
-- [ ] Gate check passes: `bundle exec rspec spec/requests/registrations_spec.rb`
-- [ ] Test count: at least 3 examples pass (bootstrap succeeds when empty, blocked when not empty, created user has admin role)
+- [x] On a fresh (zero-user) DB, visiting the registration form and submitting valid data creates exactly one `admin`-role user and logs them in
+- [x] With one or more existing users, `GET`/`POST` to the registration routes redirect to the login page and create no user
+- [x] Gate check passes: `bundle exec rspec spec/requests/registrations_spec.rb`
+- [x] Test count: at least 3 examples pass (bootstrap succeeds when empty, blocked when not empty, created user has admin role)
 
 **Tests**: integration
 **Gate**: quick
@@ -160,12 +160,12 @@ Expect all examples green, 0 failures.
 - Skill: NONE
 
 **Done when**:
-- [ ] Valid credentials establish a session (secure, HTTP-only cookie)
-- [ ] Invalid credentials show a generic error, no session established
-- [ ] Logout destroys the session and redirects to login
-- [ ] The 6th login attempt within 15 minutes (from the same IP) is rejected distinctly from a normal invalid-credentials response (429 or redirect, still generic wording)
-- [ ] Gate check passes: `bundle exec rspec spec/requests/sessions_spec.rb`
-- [ ] Test count: at least 4 examples pass
+- [x] Valid credentials establish a session (secure, HTTP-only cookie)
+- [x] Invalid credentials show a generic error, no session established
+- [x] Logout destroys the session and redirects to login
+- [x] The 6th login attempt within 15 minutes (from the same IP) is rejected distinctly from a normal invalid-credentials response (429 or redirect, still generic wording)
+- [x] Gate check passes: `bundle exec rspec spec/requests/sessions_spec.rb`
+- [x] Test count: at least 4 examples pass
 
 **Tests**: integration
 **Gate**: quick
@@ -193,11 +193,11 @@ Expect all examples green, 0 failures.
 - Skill: NONE
 
 **Done when**:
-- [ ] An admin user can create both `member`- and `admin`-role accounts via the UI
-- [ ] A `member`-role user hitting any `Admin::UsersController` action is denied (403/redirect), no admin-only content leaked
-- [ ] A newly created member account can immediately log in with the credentials set by the admin
-- [ ] Gate check passes: `bundle exec rspec spec/requests/admin/users_spec.rb`
-- [ ] Test count: at least 4 examples pass (admin creates member, admin creates admin, member denied, new member can log in)
+- [x] An admin user can create both `member`- and `admin`-role accounts via the UI
+- [x] A `member`-role user hitting any `Admin::UsersController` action is denied (403/redirect), no admin-only content leaked
+- [x] A newly created member account can immediately log in with the credentials set by the admin
+- [x] Gate check passes: `bundle exec rspec spec/requests/admin/users_spec.rb`
+- [x] Test count: at least 4 examples pass (admin creates member, admin creates admin, member denied, new member can log in)
 
 **Tests**: integration
 **Gate**: quick
@@ -225,11 +225,11 @@ Expect all examples green, 0 failures.
 - Skill: NONE
 
 **Done when**:
-- [ ] New sessions get `expires_at` set to 14 days from creation
-- [ ] A request presenting an expired session is treated as unauthenticated (redirected to login), and the expired `Session` row is cleaned up (destroyed) rather than left indefinitely valid
-- [ ] A request presenting a non-expired session continues to work normally
-- [ ] Gate check passes: `bundle exec rspec spec/models/session_spec.rb spec/requests/session_expiry_spec.rb`
-- [ ] Test count: at least 3 examples pass (expiry set on create, expired session rejected, valid session accepted)
+- [x] New sessions get `expires_at` set to 14 days from creation
+- [x] A request presenting an expired session is treated as unauthenticated (redirected to login), and the expired `Session` row is cleaned up (destroyed) rather than left indefinitely valid
+- [x] A request presenting a non-expired session continues to work normally
+- [x] Gate check passes: `bundle exec rspec spec/models/session_spec.rb spec/requests/session_expiry_spec.rb`
+- [x] Test count: at least 3 examples pass (expiry set on create, expired session rejected, valid session accepted)
 
 **Tests**: unit + integration
 **Gate**: quick
@@ -257,11 +257,11 @@ Expect all examples green, 0 failures.
 - Skill: NONE
 
 **Done when**:
-- [ ] An unauthenticated request to the dashboard redirects to login
-- [ ] A logged-in `member` is denied the admin-only demo action
-- [ ] A logged-in `admin` is allowed the admin-only demo action
-- [ ] Gate check passes: `bundle exec rspec` (full — this is the last task in the feature, run the whole suite)
-- [ ] Test count: at least 3 examples pass, and total suite test count matches the sum of all tasks' "Test count" minimums with zero unexplained deletions
+- [x] An unauthenticated request to the dashboard redirects to login
+- [x] A logged-in `member` is denied the admin-only demo action
+- [x] A logged-in `admin` is allowed the admin-only demo action
+- [x] Gate check passes: `bundle exec rspec` (full — this is the last task in the feature, run the whole suite)
+- [x] Test count: at least 3 examples pass, and total suite test count matches the sum of all tasks' "Test count" minimums with zero unexplained deletions
 
 **Tests**: integration
 **Gate**: full
@@ -353,20 +353,20 @@ No ❌ VIOLATION — all tasks are consistent with `.specs/codebase/TESTING.md`.
 
 | Requirement ID | Story | Task(s) | Status |
 |---|---|---|---|
-| AUTH-01 | P1: Log in/out | T1 (scaffold), T5 (tested) | Pending |
-| AUTH-02 | P1: Log in/out | T1 (scaffold), T5 (tested) | Pending |
-| AUTH-03 | P1: Log in/out | T1 (scaffold), T5 (tested) | Pending |
-| AUTH-04 | P1: Log in/out | T1 (mechanism), T8 (proven) | Pending |
-| AUTH-05 | P1: Log in/out | T1 (Rails default CSRF) | Pending |
-| AUTH-06 | P1: Two roles | T2, T6, T8 | Pending |
-| AUTH-07 | P1: Two roles | T2, T6, T8 | Pending |
-| AUTH-08 | P1: Two roles | T6, T8 | Pending |
-| AUTH-09 | P1: Two roles | T3, T6 | Pending |
-| AUTH-10 | P1: First-admin bootstrap | T4 | Pending |
-| AUTH-11 | P1: First-admin bootstrap | T4 | Pending |
-| AUTH-12 | P1: First-admin bootstrap | T4 | Pending |
-| AUTH-13 | P2: Member creation | T6 | Pending |
-| AUTH-14 | P2: Member creation | T6 | Pending |
+| AUTH-01 | P1: Log in/out | T1 (scaffold), T5 (tested) | Done |
+| AUTH-02 | P1: Log in/out | T1 (scaffold), T5 (tested) | Done |
+| AUTH-03 | P1: Log in/out | T1 (scaffold), T5 (tested) | Done |
+| AUTH-04 | P1: Log in/out | T1 (mechanism), T8 (proven) | Done |
+| AUTH-05 | P1: Log in/out | T1 (Rails default CSRF) | Done |
+| AUTH-06 | P1: Two roles | T2, T6, T8 | Done |
+| AUTH-07 | P1: Two roles | T2, T6, T8 | Done |
+| AUTH-08 | P1: Two roles | T6, T8 | Done |
+| AUTH-09 | P1: Two roles | T3, T6 | Done |
+| AUTH-10 | P1: First-admin bootstrap | T4 | Done |
+| AUTH-11 | P1: First-admin bootstrap | T4 | Done |
+| AUTH-12 | P1: First-admin bootstrap | T4 | Done |
+| AUTH-13 | P2: Member creation | T6 | Done |
+| AUTH-14 | P2: Member creation | T6 | Done |
 | AUTH-15 | P3: Password reset | — (not tasked; generated `PasswordsController` exists from T1 but SMTP wiring is explicitly deferred past M0) | Deferred |
 
 **Coverage:** 15 total, 14 mapped to tasks, 1 explicitly deferred (AUTH-15) ⚠️ — this is an intentional P3 deferral per spec.md, not an oversight.

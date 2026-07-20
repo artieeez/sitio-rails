@@ -1,7 +1,7 @@
 # State
 
-**Last Updated:** 2026-07-15
-**Current Work:** M0 - `inapp-auth` fully planned (Specify → Discuss → Design → Tasks, 8 tasks, T1-T2 sequential then T3/T4/T5/T7 parallel then T6→T8 sequential). `rails-app-scaffold` speced (Medium, no Design/Tasks needed). Execute not yet started for either feature. `.specs/codebase/TESTING.md` established (RSpec, model+request specs, no coverage threshold yet).
+**Last Updated:** 2026-07-20
+**Current Work:** M0 complete — `rails-app-scaffold` and `inapp-auth` implemented (T1–T8). Full suite: 27 examples, 0 failures. **Ruby 4.0.5 / Rails 8.1.3.** Next up: M1 core domain.
 
 ---
 
@@ -46,7 +46,7 @@
 
 ## Active Blockers
 
-_None yet — planning stage only._
+_None._
 
 ---
 
@@ -72,8 +72,8 @@ _None yet._
 ## Todos
 
 - [ ] Decide exact public webhook route prefix/naming during M2 Specify (must be the only unauthenticated surface per ADR-004)
-- [ ] Confirm Rails + Ruby target versions when M0 implementation starts (check current stable releases via Context7/web at that time, not now)
-- [x] ~~Decide the fixed-session-expiry mechanism for `inapp-auth`~~ — resolved in Tasks phase as T7: DB-driven `expires_at` column + check in `Authentication` concern. Not yet implemented (Execute pending).
+- [x] ~~Confirm Rails + Ruby target versions when M0 implementation starts~~ — **Ruby 4.0.5 / Rails 8.1.3** (verified at M0 completion).
+- [x] ~~Decide the fixed-session-expiry mechanism for `inapp-auth`~~ — implemented in T7 (`expires_at`, 14-day fixed expiry).
 
 ---
 

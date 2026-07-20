@@ -10,10 +10,10 @@ Sitio today has no in-app identity at all — Traefik + TinyAuth handle auth at 
 
 ## Goals
 
-- [ ] Any user can log in with email/password and get a persistent session
-- [ ] Every route is protected by default; only an explicit allowlist (future Wix webhook routes, health check) is public
-- [ ] Exactly two roles exist — `admin` and `member` — and at least one authorization check demonstrably distinguishes them
-- [ ] A first admin can always be created without needing an existing admin (no chicken-and-egg lockout)
+- [x] Any user can log in with email/password and get a persistent session
+- [x] Every route is protected by default; only an explicit allowlist (future Wix webhook routes, health check) is public
+- [x] Exactly two roles exist — `admin` and `member` — and at least one authorization check demonstrably distinguishes them
+- [x] A first admin can always be created without needing an existing admin (no chicken-and-egg lockout)
 
 ## Out of Scope
 
@@ -125,33 +125,33 @@ Sitio today has no in-app identity at all — Traefik + TinyAuth handle auth at 
 
 | Requirement ID | Story | Phase | Status |
 |---|---|---|---|
-| AUTH-01 | P1: Log in/out | Design | Pending |
-| AUTH-02 | P1: Log in/out | Design | Pending |
-| AUTH-03 | P1: Log in/out | Design | Pending |
-| AUTH-04 | P1: Log in/out | Design | Pending |
-| AUTH-05 | P1: Log in/out | Design | Pending |
-| AUTH-06 | P1: Two roles | Design | Pending |
-| AUTH-07 | P1: Two roles | Design | Pending |
-| AUTH-08 | P1: Two roles | Design | Pending |
-| AUTH-09 | P1: Two roles | Design | Pending |
-| AUTH-10 | P1: First-admin bootstrap | Design | Pending |
-| AUTH-11 | P1: First-admin bootstrap | Design | Pending |
-| AUTH-12 | P1: First-admin bootstrap | Design | Pending |
-| AUTH-13 | P2: Member account creation | Design | Pending |
-| AUTH-14 | P2: Member account creation | Design | Pending |
+| AUTH-01 | P1: Log in/out | Design | Done |
+| AUTH-02 | P1: Log in/out | Design | Done |
+| AUTH-03 | P1: Log in/out | Design | Done |
+| AUTH-04 | P1: Log in/out | Design | Done |
+| AUTH-05 | P1: Log in/out | Design | Done |
+| AUTH-06 | P1: Two roles | Design | Done |
+| AUTH-07 | P1: Two roles | Design | Done |
+| AUTH-08 | P1: Two roles | Design | Done |
+| AUTH-09 | P1: Two roles | Design | Done |
+| AUTH-10 | P1: First-admin bootstrap | Design | Done |
+| AUTH-11 | P1: First-admin bootstrap | Design | Done |
+| AUTH-12 | P1: First-admin bootstrap | Design | Done |
+| AUTH-13 | P2: Member account creation | Design | Done |
+| AUTH-14 | P2: Member account creation | Design | Done |
 | AUTH-15 | P3: Password reset | Design | Pending |
 
-**Coverage:** 15 total, 0 mapped to tasks, 15 unmapped ⚠️ (Design/Tasks not yet run — spec is pending Discuss first)
+**Coverage:** 15 total, 14 implemented (T1–T8), 1 deferred (AUTH-15 password reset / SMTP, post-M0)
 
 ---
 
 ## Success Criteria
 
-- [ ] A user can log in, reach a protected page, and log out
-- [ ] A member is denied an admin-only demo action; an admin is allowed
-- [ ] A first admin can be created on a fresh database with no prior users
-- [ ] No plaintext passwords anywhere (DB, logs)
-- [ ] Every route is protected by default except an explicit, small public allowlist
+- [x] A user can log in, reach a protected page, and log out
+- [x] A member is denied an admin-only demo action; an admin is allowed
+- [x] A first admin can be created on a fresh database with no prior users
+- [x] No plaintext passwords anywhere (DB, logs)
+- [x] Every route is protected by default except an explicit, small public allowlist
 
 ---
 

@@ -1,7 +1,7 @@
 # Roadmap
 
 **Current Milestone:** M0 — Rails Bootstrap & In-App Auth
-**Status:** Planning
+**Status:** Done
 
 Parity checklist source: `.specs/codebase/PORT-INVENTORY.md`. Cutover is big-bang (ADR-001/003): old NestJS/React stack stays live and is the parity reference until M5 ships, then it's retired in one change.
 
@@ -15,17 +15,17 @@ Parity checklist source: `.specs/codebase/PORT-INVENTORY.md`. Cutover is big-ban
 
 ### Features
 
-**Rails app scaffold** - IN PROGRESS (spec.md written, no design needed — Medium scope)
+**Rails app scaffold** - DONE (T1 scaffold commit + M0 verification; spec requirements complete)
 
 - New Rails app in `sitio-rails`, SQLite3 (no WAL), Tailwind + Hotwire installed
 - RSpec installed and wired as the test framework
 - Dockerfile + basic health check route
 
-**In-app authentication (ADR-002)** - IN PROGRESS (spec.md + context.md + design.md + tasks.md written, 8 tasks planned; Execute next — Complex scope)
+**In-app authentication (ADR-002)** - DONE (T1–T8 complete; 27 examples, 0 failures)
 
 - `User` model with `has_secure_password`, `admin`/`member` role
 - Login/logout, session cookie, CSRF
-- First-admin bootstrap strategy (seed task or invite flow — decide in Specify)
+- First-admin bootstrap via one-time registration form (zero users only); admin creates members via Admin::Users
 - All routes except a to-be-defined public webhook prefix require a session
 
 ---

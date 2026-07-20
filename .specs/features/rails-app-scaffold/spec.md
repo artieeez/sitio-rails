@@ -9,11 +9,11 @@ Before any domain feature (schools, trips, auth, Wix) can be built, we need a wo
 
 ## Goals
 
-- [ ] A new Rails app boots locally and via Docker with zero errors
-- [ ] SQLite3 is configured in default (non-WAL) journal mode, matching ADR-003
-- [ ] Tailwind CSS and Hotwire (Turbo + Stimulus) are installed and render a real page
-- [ ] RSpec replaces Minitest as the test framework and runs successfully
-- [ ] A health check endpoint exists and is reachable without auth
+- [x] A new Rails app boots locally and via Docker with zero errors
+- [x] SQLite3 is configured in default (non-WAL) journal mode, matching ADR-003
+- [x] Tailwind CSS and Hotwire (Turbo + Stimulus) are installed and render a real page
+- [x] RSpec replaces Minitest as the test framework and runs successfully
+- [x] A health check endpoint exists and is reachable without auth
 
 ## Out of Scope
 
@@ -106,21 +106,21 @@ Before any domain feature (schools, trips, auth, Wix) can be built, we need a wo
 
 | Requirement ID | Story | Phase | Status |
 |---|---|---|---|
-| SCAF-01 | P1: Boot locally + Docker | Implicit (Medium) | Pending |
-| SCAF-02 | P1: Boot locally + Docker | Implicit (Medium) | Pending |
-| SCAF-03 | P1: Tailwind + Hotwire | Implicit (Medium) | Pending |
-| SCAF-04 | P1: RSpec | Implicit (Medium) | Pending |
-| SCAF-05 | P2: Health check | Implicit (Medium) | Pending |
+| SCAF-01 | P1: Boot locally + Docker | Implicit (Medium) | Done |
+| SCAF-02 | P1: Boot locally + Docker | Implicit (Medium) | Done |
+| SCAF-03 | P1: Tailwind + Hotwire | Implicit (Medium) | Done |
+| SCAF-04 | P1: RSpec | Implicit (Medium) | Done |
+| SCAF-05 | P2: Health check | Implicit (Medium) | Done |
 
-**Coverage:** 5 total, 0 mapped to tasks, 5 unmapped ⚠️ (Tasks phase not yet run for this feature)
+**Coverage:** 5 total, 5 implemented (delivered with M0 scaffold + auth demo dashboard)
 
 ---
 
 ## Success Criteria
 
-- [ ] `bin/rails server` boots and serves `/` locally
-- [ ] Docker image builds and runs the same app
-- [ ] SQLite confirmed in non-WAL journal mode
-- [ ] Tailwind + Turbo + Stimulus all demonstrably working on one page
-- [ ] `bundle exec rspec` runs clean on a fresh checkout
-- [ ] `/up` health check reachable without auth
+- [x] `bin/rails server` boots and serves `/` locally
+- [x] Docker image builds and runs the same app
+- [x] SQLite confirmed in non-WAL journal mode
+- [x] Tailwind + Turbo + Stimulus all demonstrably working on one page
+- [x] `bundle exec rspec` runs clean on a fresh checkout
+- [x] `/up` health check reachable without auth
