@@ -12,5 +12,6 @@ Rails.application.routes.draw do
   end
 
   get "about", to: "pages#about"
-  root "pages#home"
+  get "dashboard/admin", to: "dashboard#admin_demo", as: :dashboard_admin_demo
+  root "dashboard#index"
 end

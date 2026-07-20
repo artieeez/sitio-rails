@@ -1,0 +1,20 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <% if alert = flash[:alert] %>
+    <p class="py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block" id="alert"><%= alert %></p>
+  <% end %>
+
+  <% if notice = flash[:notice] %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <%= render "nav" %>
+
+  <h1 class="font-bold text-4xl mb-3">Dashboard</h1>
+  <p class="text-gray-600 mb-6">
+    You are signed in. This page is the authenticated home — unauthenticated visitors are redirected to sign in (default-deny).
+  </p>
+
+  <div class="flex flex-wrap gap-4 text-sm">
+    <%= link_to "About", about_path, class: "text-gray-700 underline hover:no-underline" %>
+  </div>
+</div>

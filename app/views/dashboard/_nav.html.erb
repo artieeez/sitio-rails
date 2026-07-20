@@ -1,0 +1,14 @@
+<nav class="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b border-gray-200">
+  <div class="text-sm text-gray-600">
+    <span class="font-medium text-gray-900"><%= Current.user.email_address %></span>
+    <span class="mx-2 text-gray-400">·</span>
+    <span><%= Current.user.role.humanize %></span>
+  </div>
+  <div class="flex flex-wrap items-center gap-4 text-sm">
+    <% if Current.user.admin? %>
+      <%= link_to "Users", admin_users_path, class: "text-gray-700 underline hover:no-underline" %>
+      <%= link_to "Admin demo", dashboard_admin_demo_path, class: "text-gray-700 underline hover:no-underline" %>
+    <% end %>
+    <%= button_to "Sign out", session_path, method: :delete, class: "rounded-md px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium cursor-pointer" %>
+  </div>
+</nav>
