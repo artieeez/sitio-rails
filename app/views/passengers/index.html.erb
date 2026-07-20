@@ -29,8 +29,8 @@
             </p>
             <p class="text-sm text-gray-500 mt-1">
               <%= passenger.cpf_display || "Sem CPF" %>
+              · <%= passenger.payment_status_label %>
               <% if passenger.removed? %> · Removido<% end %>
-              <% if passenger.manually_settled? %> · Pago sem informações<% end %>
             </p>
           </div>
           <div class="flex flex-wrap gap-3 text-sm">

@@ -1,7 +1,7 @@
 # State
 
 **Last Updated:** 2026-07-20
-**Current Work:** M1 in progress — Schools + Trips + Passengers done. Next: Payments (+ metadata scrape).
+**Current Work:** M1 complete — Schools + Trips + Passengers + Payments + Metadata scrape all done. Next: M2 (Wix Catalog Integration).
 
 ---
 
@@ -58,7 +58,7 @@ _None._
 
 ## Lessons Learned
 
-_None yet._
+- Integration `sign_in_as` must `Rails.cache.clear` before posting to `SessionsController#create`, otherwise the login `rate_limit (to: 5)` trips once the suite grows past a handful of authenticated request tests.
 
 ---
 
@@ -81,7 +81,8 @@ _None yet._
 - [ ] Decide public webhook route prefix during M2 Specify
 - [x] Ruby/Rails versions — **Ruby 4.0.5 / Rails 8.1.3**
 - [x] Fixed session expiry — T7 `expires_at` 14 days
-- [ ] Continue M1: Trips nested under School
+- [x] M1 Schools / Trips / Passengers / Payments
+- [x] Finish M1: metadata scrape endpoint + school form wire-up
 
 ---
 

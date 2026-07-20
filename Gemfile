@@ -60,3 +60,7 @@ group :development do
   # Process manager for bin/dev (web + Tailwind watch)
   gem "foreman", require: false
 end
+
+gem "faraday", "~> 2.14"
+
+gem "faraday-follow_redirects", "~> 0.5.0"

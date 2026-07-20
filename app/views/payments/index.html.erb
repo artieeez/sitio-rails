@@ -1,0 +1,49 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <% if notice = flash[:notice] %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-5">
+    <div>
+      <p class="text-sm text-gray-500 mb-1"><%= @passenger.full_name %></p>
+      <h1 class="font-bold text-4xl">Pagamentos</h1>
+      <p class="text-sm text-gray-500 mt-2">
+        Status: <%= @passenger.payment_status_label %>
+        · Pago: <%= @passenger.paid_total_minor %> centavos
+        <% if @passenger.expected_amount_minor != nil %>
+          · Esperado: <%= @passenger.expected_amount_minor %> centavos
+        <% end %>
+      </p>
+    </div>
+    <% unless @passenger.removed? %>
+      <%= link_to "Novo pagamento", new_passenger_payment_path(@passenger), class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
+    <% end %>
+  </div>
+
+  <% if @passenger.removed? %>
+    <p class="mb-4 text-sm text-amber-800 bg-amber-50 rounded-lg px-3 py-2">Histórico somente leitura; novos pagamentos não são permitidos.</p>
+  <% end %>
+
+  <% if @payments.any? %>
+    <ul class="divide-y divide-gray-200 border border-gray-200 rounded-lg">
+      <% @payments.each do |payment| %>
+        <li class="px-4 py-3 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p class="font-medium text-gray-900"><%= payment.paid_on.strftime("%d/%m/%Y") %> · <%= payment.amount_minor %> centavos</p>
+            <p class="text-sm text-gray-500 mt-1"><%= payment.location %> · <%= payment.payer_identity %></p>
+          </div>
+          <div class="flex flex-wrap gap-3 text-sm">
+            <%= link_to "Editar", edit_passenger_payment_path(@passenger, payment), class: "text-gray-700 underline hover:no-underline" %>
+            <%= button_to "Excluir", passenger_payment_path(@passenger, payment), method: :delete, data: { turbo_confirm: "Excluir este pagamento?" }, class: "text-red-600 underline hover:no-underline cursor-pointer" %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-gray-600">Nenhum pagamento registrado.</p>
+  <% end %>
+
+  <p class="text-sm mt-6">
+    <%= link_to "← Passageiro", trip_passenger_path(@passenger.trip, @passenger), class: "text-gray-700 underline hover:no-underline" %>
+  </p>
+</div>

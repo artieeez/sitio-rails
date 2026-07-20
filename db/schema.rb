@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_20_214601) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_20_215606) do
   create_table "passenger_manual_settlements", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "passenger_id", null: false
@@ -41,6 +41,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_214601) do
     t.datetime "updated_at", null: false
     t.index ["trip_id", "cpf_normalized"], name: "index_passengers_on_trip_id_and_cpf_normalized", unique: true
     t.index ["trip_id"], name: "index_passengers_on_trip_id"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.integer "amount_minor", null: false
+    t.datetime "created_at", null: false
+    t.string "location", null: false
+    t.date "paid_on", null: false
+    t.integer "passenger_id", null: false
+    t.string "payer_identity", null: false
+    t.datetime "updated_at", null: false
+    t.string "wix_transaction_id"
+    t.index ["passenger_id"], name: "index_payments_on_passenger_id"
+    t.index ["wix_transaction_id"], name: "index_payments_on_wix_transaction_id", unique: true
   end
 
   create_table "school_deactivations", force: :cascade do |t|

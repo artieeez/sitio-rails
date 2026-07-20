@@ -1,4 +1,9 @@
-<%= form_with model: school, class: "space-y-4" do |form| %>
+<%= form_with model: school, class: "space-y-4",
+      data: {
+        controller: "metadata-fetch",
+        metadata_fetch_url_value: metadata_page_fetch_path,
+        metadata_fetch_baseline_url_value: school.url
+      } do |form| %>
   <% if school.errors.any? %>
     <div class="py-2 px-3 bg-red-50 text-red-600 rounded-lg" id="error_explanation">
       <h2 class="font-medium"><%= pluralize(school.errors.count, "erro") %> impedem salvar:</h2>
@@ -17,7 +22,10 @@
 
   <div>
     <%= form.label :url, "URL da página (apenas favicon)", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= form.url_field :url, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+    <%= form.url_field :url, class: "block w-full rounded-md border border-gray-300 px-3 py-2",
+          data: { metadata_fetch_target: "url", action: "input->metadata-fetch#queue" } %>
+    <span data-metadata-fetch-target="status" class="hidden text-sm text-gray-500">Buscando…</span>
+    <p data-metadata-fetch-target="error" class="hidden text-sm text-red-600"></p>
   </div>
 
   <div>
@@ -37,7 +45,8 @@
 
   <div>
     <%= form.label :favicon_url, "Favicon", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= form.url_field :favicon_url, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+    <%= form.url_field :favicon_url, class: "block w-full rounded-md border border-gray-300 px-3 py-2",
+          data: { metadata_fetch_target: "favicon" } %>
   </div>
 
   <div class="flex flex-wrap gap-3 pt-2">

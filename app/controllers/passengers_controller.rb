@@ -5,7 +5,7 @@ class PassengersController < ApplicationController
 
   def index
     @include_removed = ActiveModel::Type::Boolean.new.cast(params[:include_removed])
-    @passengers = @trip.passengers.listed(include_removed: @include_removed)
+    @passengers = @trip.passengers.listed(include_removed: @include_removed).includes(:payments, :manual_settlement)
   end
 
   def show

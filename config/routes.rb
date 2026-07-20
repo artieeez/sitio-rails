@@ -32,6 +32,8 @@ Rails.application.routes.draw do
   end
 
   resources :passengers, only: [] do
+    resources :payments, only: %i[ index new create edit update destroy ]
+
     scope module: :passengers do
       resource :removal, only: %i[ create destroy ]
       resource :manual_settlement, only: %i[ create destroy ]
@@ -40,5 +42,10 @@ Rails.application.routes.draw do
 
   get "about", to: "pages#about"
   get "dashboard/admin", to: "dashboard#admin_demo", as: :dashboard_admin_demo
+
+  namespace :metadata do
+    resource :page_fetch, only: %i[ create ]
+  end
+
   root "dashboard#index"
 end

@@ -30,11 +30,17 @@
     </div>
     <div>
       <dt class="text-gray-500">Valor esperado (centavos)</dt>
-      <dd class="text-gray-900"><%= @passenger.expected_amount_minor.presence || "—" %></dd>
+      <dd class="text-gray-900"><%= @passenger.expected_amount_minor != nil ? @passenger.expected_amount_minor : "—" %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Status do pagamento</dt>
+      <dd class="text-gray-900"><%= @passenger.payment_status_label %> (<%= @passenger.paid_total_minor %> / <%= @passenger.expected_amount_minor != nil ? @passenger.expected_amount_minor : "—" %>)</dd>
     </div>
   </dl>
 
   <div class="flex flex-wrap gap-4 text-sm mb-8">
+    <%= link_to "Pagamentos", passenger_payments_path(@passenger), class: "rounded-md px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
+
     <% if @passenger.manually_settled? %>
       <%= button_to "Desmarcar pago manual", passenger_manual_settlement_path(@passenger), method: :delete, class: "rounded-md px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium cursor-pointer" %>
     <% else %>

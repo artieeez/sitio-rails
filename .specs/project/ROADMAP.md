@@ -1,7 +1,7 @@
 # Roadmap
 
-**Current Milestone:** M1 — Core Domain: Schools → Trips → Passengers → Payments
-**Status:** In progress (Schools done)
+**Current Milestone:** M2 — Wix Catalog Integration (Inbound + Outbound)
+**Status:** M1 complete (Schools + Trips + Passengers + Payments + Metadata scrape all done); M2 next
 
 Parity checklist source: `.specs/codebase/PORT-INVENTORY.md`. Cutover is big-bang (ADR-001/003): old NestJS/React stack stays live and is the parity reference until M5 ships, then it's retired in one change.
 
@@ -58,14 +58,17 @@ Parity checklist source: `.specs/codebase/PORT-INVENTORY.md`. Cutover is big-ban
 - Hotwire pages: list, new, show, edit (pt-BR)
 - Payment-derived status aggregates deferred until Payments
 
-**Payments** - PLANNED
+**Payments** - DONE
 
-- CRUD nested under Passenger, minor-unit amounts, `paid_on`/`location`/`payer_identity`
-- Hotwire pages: list, new, edit
+- CRUD nested under Passenger; minor-unit amounts; `paid_on`/`location`/`payer_identity`
+- Hard delete; create blocked when passenger is removed; optional unique `wix_transaction_id` (webhook path later)
+- Derived passenger payment status (`pending` / `settled_payments` / `settled_manual` / `unavailable`)
+- Hotwire pages: list, new, edit (pt-BR)
 
-**Metadata scrape** - PLANNED
+**Metadata scrape** - DONE
 
-- `POST /metadata/fetch-page` equivalent (title/favicon) used by school form's Wix collection preview
+- `POST /metadata/page_fetch` (title/description/image/favicon/price) with SSRF-safe URL fetching (`Metadata::SafeUrl`), HTML parsing (`Metadata::PageParser`), and Faraday client with redirect-following (`Metadata::PageFetch`)
+- School form wired via `metadata-fetch` Stimulus controller: debounced fetch on URL change, favicon auto-fill, status/error UI (pt-BR)
 
 ---
 

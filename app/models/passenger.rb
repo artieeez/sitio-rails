@@ -1,8 +1,15 @@
 class Passenger < ApplicationRecord
+  PENDING = "pending"
+  SETTLED_PAYMENTS = "settled_payments"
+  SETTLED_MANUAL = "settled_manual"
+  UNAVAILABLE = "unavailable"
+  PAYMENT_STATUSES = [ PENDING, SETTLED_PAYMENTS, SETTLED_MANUAL, UNAVAILABLE ].freeze
+
   include Passenger::Removable
   include Passenger::ManuallySettlable
 
   belongs_to :trip, touch: true
+  has_many :payments, dependent: :destroy
 
   attr_accessor :cpf, :confirm_name_duplicate
 
@@ -27,7 +34,42 @@ class Passenger < ApplicationRecord
   def cpf_display = Cpf.format(cpf_normalized)
 
   def expected_amount_minor
-    expected_amount_override_minor.presence || trip.default_expected_amount_minor
+    if expected_amount_override_minor != nil
+      expected_amount_override_minor
+    else
+      trip.default_expected_amount_minor
+    end
+  end
+
+  def paid_total_minor
+    if payments.loaded?
+      payments.sum(&:amount_minor)
+    else
+      payments.sum(:amount_minor)
+    end
+  end
+
+  def payment_status
+    if manually_settled?
+      SETTLED_MANUAL
+    elsif expected_amount_minor != nil
+      if paid_total_minor >= expected_amount_minor
+        SETTLED_PAYMENTS
+      else
+        PENDING
+      end
+    else
+      UNAVAILABLE
+    end
+  end
+
+  def payment_status_label
+    case payment_status
+    when SETTLED_MANUAL then "Pago (manual)"
+    when SETTLED_PAYMENTS then "Pago"
+    when PENDING then "Pendente"
+    else "Indisponível"
+    end
   end
 
   def normalized_full_name

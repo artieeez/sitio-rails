@@ -1,0 +1,21 @@
+maria_full:
+  passenger: maria
+  amount_minor: 15000
+  paid_on: <%= Date.new(2026, 7, 10) %>
+  location: Banco
+  payer_identity: Ana Silva
+
+joao_partial:
+  passenger: joao
+  amount_minor: 5000
+  paid_on: <%= Date.new(2026, 7, 12) %>
+  location: Loja
+  payer_identity: João Souza
+
+wix_payment:
+  passenger: maria
+  amount_minor: 0
+  paid_on: <%= Date.new(2026, 7, 1) %>
+  location: wix
+  payer_identity: Wix
+  wix_transaction_id: wix-txn-fixture-1

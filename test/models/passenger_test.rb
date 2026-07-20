@@ -51,6 +51,26 @@ class PassengerTest < ActiveSupport::TestCase
     assert_equal 15_000, @maria.expected_amount_minor
   end
 
+  test "payment status is settled when paid total meets expected" do
+    assert_equal Passenger::SETTLED_PAYMENTS, @maria.payment_status
+    assert_equal 15_000, @maria.paid_total_minor
+  end
+
+  test "payment status is pending when underpaid" do
+    assert_equal Passenger::PENDING, passengers(:joao).payment_status
+  end
+
+  test "manual settlement wins over payment totals" do
+    passengers(:joao).mark_manual_settlement(user: @admin)
+    assert_equal Passenger::SETTLED_MANUAL, passengers(:joao).reload.payment_status
+  end
+
+  test "payment status unavailable without expected amount" do
+    trip = trips(:inactive)
+    passenger = trip.passengers.create!(full_name: "Sem Esperado", confirm_name_duplicate: true)
+    assert_equal Passenger::UNAVAILABLE, passenger.payment_status
+  end
+
   test "blocks trip deletion while passengers exist" do
     deletion = @trip.deletion
     assert_not deletion.allowed?

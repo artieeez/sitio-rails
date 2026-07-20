@@ -1,0 +1,6 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <h1 class="font-bold text-4xl mb-2">Novo pagamento</h1>
+  <p class="text-sm text-gray-500 mb-5"><%= @passenger.full_name %></p>
+
+  <%= render "form", passenger: @passenger, payment: @payment %>
+</div>
