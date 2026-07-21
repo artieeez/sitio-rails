@@ -26,7 +26,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.inputs.branch }}
 
@@ -55,7 +55,7 @@ jobs:
           cache-from: type=gha,scope=sitio-rails
           cache-to: type=gha,mode=max,scope=sitio-rails
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           repository: artieeez/artr-gitops
           token: ${{ secrets.ARTR_GITOPS_REPO_TOKEN }}
