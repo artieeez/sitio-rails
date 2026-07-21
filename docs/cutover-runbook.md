@@ -61,12 +61,18 @@ stringData:
   RAILS_MASTER_KEY: "$(cat ~/Documents/sitio/sitio-rails/config/master.key)"
 EOF
 
-kubeseal --format yaml < /tmp/sitio-rails-secrets.yaml \
+kubeseal --format yaml \
+  --controller-namespace sealed-secrets \
+  --controller-name sealed-secrets \
+  < /tmp/sitio-rails-secrets.yaml \
   > ~/Documents/sitio/artr-gitops/apps/sitio-staging/sitio-rails/sitio-rails-secrets-sealed.yaml
 
 # Production (same key is fine — greenfield DB either way)
 sed 's/sitio-staging/sitio-production/' /tmp/sitio-rails-secrets.yaml > /tmp/sitio-rails-secrets-prod.yaml
-kubeseal --format yaml < /tmp/sitio-rails-secrets-prod.yaml \
+kubeseal --format yaml \
+  --controller-namespace sealed-secrets \
+  --controller-name sealed-secrets \
+  < /tmp/sitio-rails-secrets-prod.yaml \
   > ~/Documents/sitio/artr-gitops/apps/sitio-production/sitio-rails/sitio-rails-secrets-sealed.yaml
 
 rm -f /tmp/sitio-rails-secrets.yaml /tmp/sitio-rails-secrets-prod.yaml
