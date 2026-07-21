@@ -1,20 +1,15 @@
 name: Deploy Rails
 
 on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
   workflow_dispatch:
     inputs:
       branch:
-        description: "Branch to deploy from"
+        description: "Branch to build and deploy to staging"
         required: false
         default: "main"
-      environment:
-        description: "GitOps environment to bump (staging or production)"
-        required: false
-        default: "staging"
-        type: choice
-        options:
-          - staging
-          - production
 
 env:
   REGISTRY: vcp.ocir.io
@@ -22,13 +17,27 @@ env:
 
 jobs:
   deploy:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
+      - name: Resolve ref
+        id: meta
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            echo "ref=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=${{ github.event.inputs.branch }}" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.inputs.branch }}
+          ref: ${{ steps.meta.outputs.ref }}
 
       - name: Compute short SHA
         run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
@@ -38,6 +47,8 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.OCIR_USERNAME }}
           password: ${{ secrets.OCIR_AUTH_TOKEN }}
+
+      - uses: docker/setup-qemu-action@v3
 
       - uses: docker/setup-buildx-action@v4
 
@@ -51,7 +62,7 @@ jobs:
           sbom: false
           tags: |
             ${{ env.REGISTRY }}/${{ secrets.OCIR_NAMESPACE }}/${{ env.IMAGE_NAME }}:sha-${{ env.SHORT_SHA }}
-            ${{ env.REGISTRY }}/${{ secrets.OCIR_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.environment }}-latest
+            ${{ env.REGISTRY }}/${{ secrets.OCIR_NAMESPACE }}/${{ env.IMAGE_NAME }}:staging-latest
           cache-from: type=gha,scope=sitio-rails
           cache-to: type=gha,mode=max,scope=sitio-rails
 
@@ -61,23 +72,19 @@ jobs:
           token: ${{ secrets.ARTR_GITOPS_REPO_TOKEN }}
           path: artr-gitops
 
-      - name: Bump image tag in GitOps
+      - name: Bump staging image tag in GitOps
+        env:
+          OCIR_NAMESPACE: ${{ secrets.OCIR_NAMESPACE }}
         run: |
-          SHORT_SHA="${GITHUB_SHA::7}"
-          ENV_NAME="${{ github.event.inputs.environment }}"
-          NS="sitio-${ENV_NAME}"
-          FILE="artr-gitops/apps/${NS}/sitio-rails/deployment.yaml"
-          sed -i "s|image: vcp.ocir.io/.*/sitio-rails:.*|image: vcp.ocir.io/${{ secrets.OCIR_NAMESPACE }}/sitio-rails:sha-${SHORT_SHA}|" "$FILE"
+          FILE="artr-gitops/apps/sitio-staging/sitio-rails/deployment.yaml"
+          sed -i "s|image: vcp.ocir.io/.*/sitio-rails:.*|image: vcp.ocir.io/${OCIR_NAMESPACE}/sitio-rails:sha-${SHORT_SHA}|" "$FILE"
 
       - name: Commit & push GitOps
         run: |
-          SHORT_SHA="${GITHUB_SHA::7}"
-          ENV_NAME="${{ github.event.inputs.environment }}"
-          NS="sitio-${ENV_NAME}"
           cd artr-gitops
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "apps/${NS}/sitio-rails/deployment.yaml" 2>/dev/null || true
+          git add apps/sitio-staging/sitio-rails/deployment.yaml 2>/dev/null || true
           git diff --cached --quiet && exit 0
-          git commit -m "chore(gitops): bump sitio-rails (${ENV_NAME}) to sha-${SHORT_SHA}"
+          git commit -m "chore(gitops): bump sitio-rails (staging) to sha-${SHORT_SHA}"
           git push origin HEAD
