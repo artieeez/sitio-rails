@@ -1,7 +1,7 @@
 module Metadata::SafeUrl
   module_function
 
-  METADATA_HOST_BLOCKLIST = Set[ "metadata.google.internal", "169.254.169.254" ].freeze
+  METADATA_HOST_BLOCKLIST = Set["metadata.google.internal", "169.254.169.254"].freeze
 
   def assert!(uri)
     raise Metadata::PageFetch::InvalidUrl, "URL must not include credentials" if uri.user || uri.password

@@ -13,6 +13,7 @@ module Admin
 
     def create
       @user = User.new(user_params)
+      @user.role = requested_role
       if @user.save
         redirect_to admin_users_path, notice: "User was successfully created."
       else
@@ -29,7 +30,9 @@ module Admin
         attributes = attributes.except(:password, :password_confirmation)
       end
 
-      if @user.update(attributes)
+      @user.assign_attributes(attributes)
+      @user.role = requested_role
+      if @user.save
         redirect_to admin_users_path, notice: "User was successfully updated."
       else
         redirect_to edit_admin_user_path(@user), alert: @user.errors.full_messages.to_sentence
@@ -42,7 +45,11 @@ module Admin
       end
 
       def user_params
-        params.require(:user).permit(:email_address, :password, :password_confirmation, :role)
+        params.require(:user).permit(:email_address, :password, :password_confirmation)
+      end
+
+      def requested_role
+        params.require(:user)[:role]
       end
   end
 end
