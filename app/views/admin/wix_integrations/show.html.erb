@@ -1,0 +1,85 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <% if alert = flash[:alert] %>
+    <p class="py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block" id="alert"><%= alert %></p>
+  <% end %>
+
+  <% if notice = flash[:notice] %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <h1 class="font-bold text-4xl mb-5">Integração Wix</h1>
+
+  <%= form_with model: @wix_integration, url: admin_wix_integration_path, method: :patch, class: "space-y-6" do |form| %>
+    <% if @wix_integration.errors.any? %>
+      <div class="py-2 px-3 bg-red-50 text-red-600 rounded-lg" id="error_explanation">
+        <h2 class="font-medium"><%= pluralize(@wix_integration.errors.count, "erro") %> impedem salvar:</h2>
+        <ul class="list-disc ml-5 mt-1 text-sm">
+          <% @wix_integration.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div>
+      <%= form.label :site_id, "Site Wix", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <% if @wix_integration.env_overridden?(:site_id) %>
+        <p class="text-xs text-amber-700 mb-1">Definido pela variável de ambiente <code>WIX_SITE_ID</code>; a alteração abaixo não terá efeito.</p>
+      <% end %>
+      <% if @sites.present? %>
+        <%= form.select :site_id,
+              @sites.map { |site| [ "#{site["displayName"] || site["name"]} (#{site["id"] || site["_id"]})", site["id"] || site["_id"] ] },
+              { include_blank: "Selecione um site" },
+              class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+      <% else %>
+        <%= form.text_field :site_id, placeholder: "ID do site Wix", class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+        <p class="text-xs text-gray-500 mt-1">Configure a chave de API privada abaixo e salve para carregar a lista de sites.</p>
+      <% end %>
+    </div>
+
+    <div>
+      <%= form.label :public_key, "Chave pública (verificação de webhook)", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <% if @wix_integration.env_overridden?(:public_key) %>
+        <p class="text-xs text-amber-700 mb-1">Definido pela variável de ambiente <code>WIX_PUBLIC_KEY</code>; a alteração abaixo não terá efeito.</p>
+      <% end %>
+      <%= form.text_area :public_key, rows: 6, placeholder: "-----BEGIN PUBLIC KEY-----", class: "block w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-xs" %>
+    </div>
+
+    <div>
+      <%= form.label :private_api_key, "Chave de API privada", class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <% if @wix_integration.env_overridden?(:private_api_key) %>
+        <p class="text-xs text-amber-700 mb-1">Definido pela variável de ambiente <code>WIX_PRIVATE_API_KEY</code>; a alteração abaixo não terá efeito.</p>
+      <% end %>
+      <p class="text-sm text-gray-500 mb-1">
+        <% if @wix_integration.private_api_key_prefix.present? %>
+          Chave atual: <code><%= @wix_integration.private_api_key_prefix %>…</code>
+        <% else %>
+          Nenhuma chave configurada.
+        <% end %>
+      </p>
+      <%= form.password_field :private_api_key, value: nil, autocomplete: "off", placeholder: "Deixe em branco para manter a chave atual", class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+    </div>
+
+    <%= form.submit "Salvar", class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium cursor-pointer" %>
+  <% end %>
+
+  <div class="mt-10 border-t border-gray-200 pt-6">
+    <h2 class="font-semibold text-xl mb-3">Webhook do Wix</h2>
+    <p class="text-sm text-gray-600 mb-2">Configure este endereço no painel do Wix para receber eventos de catálogo e pagamento:</p>
+    <p class="font-mono text-sm bg-gray-50 border border-gray-200 rounded-md px-3 py-2 break-all"><%= @webhook_callback_url %></p>
+
+    <h3 class="font-medium mt-4 mb-2">Eventos aceitos</h3>
+    <ul class="text-sm divide-y divide-gray-100 border border-gray-200 rounded-md">
+      <% Wix::Event::DESCRIPTIONS.each do |type, description| %>
+        <li class="px-3 py-2 flex flex-wrap justify-between gap-4">
+          <span class="text-gray-900"><%= description %></span>
+          <span class="text-gray-400 font-mono text-xs"><%= type %></span>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <p class="mt-6 text-sm">
+    <%= link_to "Ver eventos recebidos →", admin_wix_events_path, class: "text-gray-700 underline hover:no-underline" %>
+  </p>
+</div>

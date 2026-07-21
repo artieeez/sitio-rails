@@ -1,7 +1,7 @@
 # Roadmap
 
-**Current Milestone:** M2 — Wix Catalog Integration (Inbound + Outbound)
-**Status:** M1 complete (Schools + Trips + Passengers + Payments + Metadata scrape all done); M2 next
+**Current Milestone:** M5 — Cutover
+**Status:** M4 complete (AD-009). Admin Wix config UI (`Admin::WixIntegrationsController`, site picker, webhook docs, real `Wix::Event` inbox) and the mutating-action `AuditLog` trail are live. Next: M5 cutover (artr-gitops manifests + DNS switch), not started.
 
 Parity checklist source: `.specs/codebase/PORT-INVENTORY.md`. Cutover is big-bang (ADR-001/003): old NestJS/React stack stays live and is the parity reference until M5 ships, then it's retired in one change.
 
@@ -41,13 +41,13 @@ Parity checklist source: `.specs/codebase/PORT-INVENTORY.md`. Cutover is big-ban
 **Schools** - DONE
 
 - CRUD, deactivate/activate via `School::Deactivation`, store hide/show via `School::StoreConcealment`
-- Hard delete via nested `deletion` resource (Wix product-count gate deferred to M2)
+- Hard delete via nested `deletion` resource; blocked when the linked Wix collection still has products, soft-fail permissive when no Wix API key is configured (`School::Deletion`, AD-007)
 - Hotwire pages: directory, new, show, edit (pt-BR)
 
 **Trips** - DONE
 
 - CRUD nested under School; deactivate/activate + store conceal via shared concerns
-- Hard delete via nested `deletion` (blocked when passengers exist; Wix order gate deferred to M2)
+- Hard delete via nested `deletion` (blocked when passengers exist; no separate Wix order gate — matches Nest, which also only checks passengers on trip delete)
 - Hourly Solid Queue job conceals expired store-visible trips locally
 - Hotwire pages: list under school, new, show, edit (pt-BR)
 
@@ -80,17 +80,24 @@ Parity checklist source: `.specs/codebase/PORT-INVENTORY.md`. Cutover is big-ban
 
 ### Features
 
-**Outbound Wix API client** - PLANNED
+**Outbound Wix API client** - DONE
 
-- Stores Catalog v1 (collections/products CRUD + query), site list, media upload URL
-- Graceful no-crash behavior when Wix key not configured
+- `Wix::Client` (Faraday): Stores Catalog v1 read (`stores-reader/v1`) + write (`stores/v1`) collections/products CRUD + query, prefix autocomplete helpers, site list (`site-list/v2`), media upload URL (`site-media/v1`)
+- Raises typed errors (`ApiKeyMissing` / `NotFound` / `UpstreamError`); `WixIntegration` singleton resolves ENV vars first, then the DB row, so a missing key never crashes catalog sync
+- Injectable connection for tests (no real HTTP in the suite)
 
-**Inbound catalog webhooks** - PLANNED
+**Inbound catalog webhooks** - DONE
 
-- Public JWT-verified endpoint (this + M3's payment webhook are the *only* public HTTP surface per ADR-004)
-- `WixEvent` inbox model + async processing (Solid Queue), replacing Nest's in-process queue
-- Collection Created/Changed/Deleted → School create/update/deactivate
-- Product Created/Changed/Deleted → Trip create/update/deactivate
+- Public JWT-verified endpoint `POST /webhooks/wix` (RS256, public key from `WixIntegration`); this + M3's payment webhook are the *only* public HTTP surface per ADR-004
+- `Wix::Event` inbox model (`wix_events` table) + async processing via `Wix::ProcessEventJob` (`after_create_commit`, `retry_on` with polynomial backoff, marks the event failed on final discard)
+- `Wix::CatalogSync` PORO dispatches Collection/Product Created/Changed/Deleted, mirroring Nest's `wix-webhook-event-handler.service.ts`, including drift-heal on `*Changed` when no local record matches yet
+- Visibility mapping onto `Deactivation`/`StoreConcealment` state-as-records (not Nest's booleans) per AD-007
+- `PaymentEvent` is ingested and marked processed but is a deliberate no-op (M3 fills in the handler)
+
+**Wix catalog autocomplete (authenticated)** - DONE
+
+- `GET /wix/collections/autocomplete`, `GET /wix/collections/:id`, `GET /wix/products/autocomplete`, `GET /wix/products/:id` — same session auth as the rest of the admin app (matches Nest, no Wix-specific authorization tier)
+- School/Trip forms wired via `wix-autocomplete` Stimulus (debounced prefix search, pick fills id + snapshot fields)
 
 ---
 
@@ -102,15 +109,15 @@ Parity checklist source: `.specs/codebase/PORT-INVENTORY.md`. Cutover is big-ban
 
 ### Features
 
-**Payment event ingestion** - PLANNED
+**Payment event ingestion** - DONE
 
-- Extend the M2 webhook endpoint/queue to handle `PaymentEvent` (Cashier v3) sub-events
-- Resolve order → line items → product IDs via eCom Orders API
+- `Wix::Event#process_now` routes `PaymentEvent` to `Wix::PaymentSync` (was a deliberate no-op in M2); resolves the sub-event (`TRANSACTION_CREATED`/`TRANSACTION_UPDATED`/`TRANSACTION_STATUS_CHANGED`) and `transaction.verticalOrderId`, then `Wix::Client#get_order` (`GET /ecom/v1/orders/{id}`)
+- Ensures School/Trip exist for every line item's product, drift-healing via `Wix::ProductSnapshot` (shared with `Wix::CatalogSync`), matching Nest's `ensureProductAndSchoolForPayment`
 
-**Auto-create Passenger & Payment** - PLANNED
+**Auto-create Passenger & Payment** - DONE
 
-- Passenger match/create by CPF from order buyer/custom fields
-- Payment create with `wix_transaction_id` dedup (unique constraint, matches Nest's P7)
+- Passenger match/create by CPF from `extendedFields._user_fields` (falls back to the line item's free-text checkout fields when `student_name` is absent, matching Nest); `confirm_name_duplicate` bypassed since Wix-sourced data has no manual duplicate-name confirmation step
+- Payment created only for the order's first line item per transaction (matches Nest), deduped by unique `wix_transaction_id`; skipped when the matched passenger was removed (Rails-specific — no Nest equivalent)
 
 ---
 
@@ -122,15 +129,16 @@ Parity checklist source: `.specs/codebase/PORT-INVENTORY.md`. Cutover is big-ban
 
 ### Features
 
-**Wix integration config UI** - PLANNED
+**Wix integration config UI** - DONE
 
-- Admin-only: site/keys form, webhook callback URL + docs
-- Wix event list view (real data, not the fixture-only screen from today's dashboard)
+- Admin-only `Admin::WixIntegrationsController#show/update` under `namespace :admin`: site select (loaded from `Wix::Client#list_sites` once a private key is configured, text-field fallback otherwise), public key textarea, private key rotate-by-blank field showing only the stored prefix, webhook callback URL, and an events-accepted panel driven by `Wix::Event::DESCRIPTIONS` (pt-BR)
+- `Admin::WixEventsController#index/show` — real `Wix::Event` inbox (status, payload, last error), replacing the fixture-only screen from today's dashboard
 
-**Audit log** - PLANNED
+**Audit log** - DONE
 
-- Record actor (user id/email or `"system"` for webhooks), action, resource, IP on mutations
-- Minimal admin view to browse the log
+- `AuditLog` model + `Auditable` controller concern (`after_action`, mutating verbs only) records actor (user id/email/name, or `"system"` for unauthenticated webhooks), action (HTTP method), resource (path), IP on every mutating request app-wide, including `Webhooks::WixController`
+- A logging failure is caught and reported via `Rails.error.report`, never breaks the request
+- `Admin::AuditLogsController#index/show` — recent-first, simple `page`-based pagination (100/page)
 
 ---
 

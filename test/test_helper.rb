@@ -15,7 +15,8 @@ module ActiveSupport
                       trip_deactivations: Trip::Deactivation,
                       trip_store_concealments: Trip::StoreConcealment,
                       passenger_removals: Passenger::Removal,
-                      passenger_manual_settlements: Passenger::ManualSettlement
+                      passenger_manual_settlements: Passenger::ManualSettlement,
+                      wix_events: Wix::Event
   end
 end
 

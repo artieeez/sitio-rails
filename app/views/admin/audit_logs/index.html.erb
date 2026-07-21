@@ -1,0 +1,38 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <h1 class="font-bold text-4xl mb-5">Log de auditoria</h1>
+
+  <% if @audit_logs.empty? %>
+    <p class="text-sm text-gray-500">Nenhum registro ainda.</p>
+  <% else %>
+    <ul class="divide-y divide-gray-200 border border-gray-200 rounded-lg">
+      <% @audit_logs.each do |audit_log| %>
+        <li class="px-4 py-3">
+          <%= link_to admin_audit_log_path(audit_log), class: "flex flex-wrap items-center justify-between gap-2" do %>
+            <div>
+              <p class="font-medium text-gray-900">
+                <%= audit_log.system? ? "Sistema" : (audit_log.user_name || audit_log.user_email) %>
+                <span class="text-gray-400 font-mono text-xs"><%= audit_log.action %></span>
+              </p>
+              <p class="text-sm text-gray-500"><%= audit_log.resource %></p>
+            </div>
+            <p class="text-sm text-gray-500 text-right">
+              <%= audit_log.created_at.strftime("%d/%m/%Y %H:%M") %><br>
+              <span class="text-xs"><%= audit_log.ip_address %></span>
+            </p>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+
+    <div class="flex justify-between mt-5 text-sm">
+      <% if params[:page].to_i > 1 %>
+        <%= link_to "← Anterior", admin_audit_logs_path(page: params[:page].to_i - 1), class: "text-gray-700 underline hover:no-underline" %>
+      <% else %>
+        <span></span>
+      <% end %>
+      <% if @audit_logs.size == 100 %>
+        <%= link_to "Próxima →", admin_audit_logs_path(page: [ params[:page].to_i, 1 ].max + 1), class: "text-gray-700 underline hover:no-underline" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

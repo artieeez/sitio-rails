@@ -1,0 +1,33 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <h1 class="font-bold text-4xl mb-5">Registro de auditoria</h1>
+
+  <dl class="space-y-3 text-sm mb-8">
+    <div>
+      <dt class="text-gray-500">Ator</dt>
+      <dd class="text-gray-900">
+        <%= @audit_log.system? ? "Sistema" : (@audit_log.user_name || @audit_log.user_email) %>
+        (<%= @audit_log.user_id %>)
+      </dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Ação</dt>
+      <dd class="text-gray-900"><%= @audit_log.action %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Recurso</dt>
+      <dd class="text-gray-900"><%= @audit_log.resource %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Endereço IP</dt>
+      <dd class="text-gray-900"><%= @audit_log.ip_address.presence || "—" %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Data</dt>
+      <dd class="text-gray-900"><%= @audit_log.created_at.strftime("%d/%m/%Y %H:%M:%S") %></dd>
+    </div>
+  </dl>
+
+  <p class="text-sm">
+    <%= link_to "← Log de auditoria", admin_audit_logs_path, class: "text-gray-700 underline hover:no-underline" %>
+  </p>
+</div>

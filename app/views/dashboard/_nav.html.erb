@@ -8,6 +8,9 @@
     <%= link_to "Escolas", schools_path, class: "text-gray-700 underline hover:no-underline" %>
     <% if Current.user.admin? %>
       <%= link_to "Users", admin_users_path, class: "text-gray-700 underline hover:no-underline" %>
+      <%= link_to "Integração Wix", admin_wix_integration_path, class: "text-gray-700 underline hover:no-underline" %>
+      <%= link_to "Eventos Wix", admin_wix_events_path, class: "text-gray-700 underline hover:no-underline" %>
+      <%= link_to "Log de auditoria", admin_audit_logs_path, class: "text-gray-700 underline hover:no-underline" %>
       <%= link_to "Admin demo", dashboard_admin_demo_path, class: "text-gray-700 underline hover:no-underline" %>
     <% end %>
     <%= button_to "Sign out", session_path, method: :delete, class: "rounded-md px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium cursor-pointer" %>

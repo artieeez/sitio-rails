@@ -3,6 +3,10 @@ admin = User.find_or_create_by!(email_address: "admin@sitio.local") do |user|
   user.role = :admin
 end
 
+# Blank singleton row: real credentials come from WIX_SITE_ID / WIX_PRIVATE_API_KEY /
+# WIX_PUBLIC_KEY (ENV wins over this row in WixIntegration#resolve_*).
+WixIntegration.instance
+
 active_school = School.find_or_create_by!(title: "Escola Ativa") do |school|
   school.description = "Escola de exemplo ativa e visível na loja."
   school.url = "https://example.com/escola-ativa"
@@ -53,4 +57,9 @@ active_school.trips.find_or_create_by!(title: "Viagem Expirada na Loja") do |tri
   trip.expiration_date = 1.day.ago
 end
 
-puts "Seeded admin=#{admin.email_address}, schools=#{School.count}, trips=#{Trip.count}, passengers=#{Passenger.count}, payments=#{Payment.count}"
+if AuditLog.count.zero?
+  AuditLog.record(user: admin, action: "POST", resource: "/schools", ip_address: "127.0.0.1")
+  AuditLog.record(user: nil, action: "POST", resource: "/webhooks/wix", ip_address: "203.0.113.10")
+end
+
+puts "Seeded admin=#{admin.email_address}, schools=#{School.count}, trips=#{Trip.count}, passengers=#{Passenger.count}, payments=#{Payment.count}, audit_logs=#{AuditLog.count}"

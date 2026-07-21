@@ -9,6 +9,9 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :users, only: %i[ index new create edit update ]
+    resource :wix_integration, only: %i[ show update ]
+    resources :wix_events, only: %i[ index show ]
+    resources :audit_logs, only: %i[ index show ]
   end
 
   resources :schools, only: %i[ index show new create edit update ] do
@@ -45,6 +48,20 @@ Rails.application.routes.draw do
 
   namespace :metadata do
     resource :page_fetch, only: %i[ create ]
+  end
+
+  namespace :wix do
+    resources :collections, only: %i[ show ] do
+      collection { get :autocomplete }
+    end
+
+    resources :products, only: %i[ show ] do
+      collection { get :autocomplete }
+    end
+  end
+
+  namespace :webhooks do
+    resource :wix, only: %i[ create ], controller: "wix"
   end
 
   root "dashboard#index"

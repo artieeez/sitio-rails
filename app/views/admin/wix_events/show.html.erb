@@ -1,0 +1,46 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <div class="flex items-center justify-between mb-5">
+    <h1 class="font-bold text-4xl"><%= @wix_event.description %></h1>
+  </div>
+
+  <dl class="space-y-3 text-sm mb-8">
+    <div>
+      <dt class="text-gray-500">Tipo</dt>
+      <dd class="text-gray-900 font-mono text-xs"><%= @wix_event.event_type %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Entidade Wix</dt>
+      <dd class="text-gray-900"><%= @wix_event.wix_entity_id %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Status</dt>
+      <dd class="text-gray-900">
+        <% if @wix_event.failed? %>
+          Falhou (<%= @wix_event.attempts %> tentativas)
+        <% elsif @wix_event.processed? %>
+          Processado em <%= @wix_event.processed_at.strftime("%d/%m/%Y %H:%M") %>
+        <% else %>
+          Pendente
+        <% end %>
+      </dd>
+    </div>
+    <% if @wix_event.last_error.present? %>
+      <div>
+        <dt class="text-gray-500">Último erro</dt>
+        <dd class="text-red-700"><%= @wix_event.last_error %></dd>
+      </div>
+    <% end %>
+    <div>
+      <dt class="text-gray-500">Recebido em</dt>
+      <dd class="text-gray-900"><%= @wix_event.created_at.strftime("%d/%m/%Y %H:%M") %></dd>
+    </div>
+    <div>
+      <dt class="text-gray-500">Payload</dt>
+      <dd class="text-gray-900"><pre class="bg-gray-50 border border-gray-200 rounded-md px-3 py-2 text-xs overflow-auto"><%= JSON.pretty_generate(@wix_event.payload) %></pre></dd>
+    </div>
+  </dl>
+
+  <p class="text-sm">
+    <%= link_to "← Eventos Wix", admin_wix_events_path, class: "text-gray-700 underline hover:no-underline" %>
+  </p>
+</div>

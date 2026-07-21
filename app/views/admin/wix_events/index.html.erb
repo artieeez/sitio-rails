@@ -1,0 +1,35 @@
+<div class="mx-auto md:w-2/3 w-full">
+  <div class="flex items-center justify-between mb-5">
+    <h1 class="font-bold text-4xl">Eventos Wix</h1>
+    <%= link_to "← Integração Wix", admin_wix_integration_path, class: "text-gray-700 underline hover:no-underline text-sm" %>
+  </div>
+
+  <% if @wix_events.empty? %>
+    <p class="text-sm text-gray-500">Nenhum evento recebido ainda.</p>
+  <% else %>
+    <ul class="divide-y divide-gray-200 border border-gray-200 rounded-lg">
+      <% @wix_events.each do |event| %>
+        <li class="px-4 py-3">
+          <%= link_to admin_wix_event_path(event), class: "flex flex-wrap items-center justify-between gap-2" do %>
+            <div>
+              <p class="font-medium text-gray-900"><%= event.description %></p>
+              <p class="text-sm text-gray-500"><%= event.wix_entity_id %> · <%= event.created_at.strftime("%d/%m/%Y %H:%M") %></p>
+            </div>
+            <span class="text-xs font-medium rounded-full px-2.5 py-1
+              <%= if event.failed? then "bg-red-50 text-red-700"
+                  elsif event.processed? then "bg-green-50 text-green-700"
+                  else "bg-gray-100 text-gray-700" end %>">
+              <% if event.failed? %>
+                Falhou
+              <% elsif event.processed? %>
+                Processado
+              <% else %>
+                Pendente
+              <% end %>
+            </span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>

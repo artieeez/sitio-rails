@@ -1,8 +1,11 @@
 <%= form_with model: school, class: "space-y-4",
       data: {
-        controller: "metadata-fetch",
+        controller: "metadata-fetch wix-autocomplete",
         metadata_fetch_url_value: metadata_page_fetch_path,
-        metadata_fetch_baseline_url_value: school.url
+        metadata_fetch_baseline_url_value: school.url.to_s,
+        wix_autocomplete_url_value: autocomplete_wix_collections_path(format: :json),
+        wix_autocomplete_show_url_value: "/wix/collections/:id.json",
+        wix_autocomplete_min_length_value: 1
       } do |form| %>
   <% if school.errors.any? %>
     <div class="py-2 px-3 bg-red-50 text-red-600 rounded-lg" id="error_explanation">
@@ -15,38 +18,54 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :wix_collection_id, "Coleção Wix", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= form.text_field :wix_collection_id, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  <div class="relative">
+    <div class="flex items-center gap-2 mb-1">
+      <%= form.label :wix_collection_id, "Coleção Wix", class: "block text-sm font-medium text-gray-700" %>
+      <span data-wix-autocomplete-target="status" class="hidden text-xs text-gray-500">Buscando…</span>
+    </div>
+    <%= form.hidden_field :wix_collection_id, data: { wix_autocomplete_target: "id" } %>
+    <input type="search"
+           value="<%= school.wix_collection_id %>"
+           placeholder="Buscar coleção por nome…"
+           autocomplete="off"
+           class="block w-full rounded-md border border-gray-300 px-3 py-2"
+           data-wix-autocomplete-target="query"
+           data-action="input->wix-autocomplete#queue focus->wix-autocomplete#open">
+    <ul data-wix-autocomplete-target="results"
+        class="hidden absolute z-10 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-sm divide-y divide-gray-100 max-h-60 overflow-auto"></ul>
+    <p data-wix-autocomplete-target="error" class="hidden text-sm text-amber-700 mt-1"></p>
+    <p class="text-xs text-gray-500 mt-1">Digite para buscar no catálogo Wix. O id da coleção é preenchido ao escolher.</p>
   </div>
 
   <div>
-    <%= form.label :url, "URL da página (apenas favicon)", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= form.url_field :url, class: "block w-full rounded-md border border-gray-300 px-3 py-2",
+    <div class="flex items-center gap-2 mb-1">
+      <%= form.label :url, "URL da página (apenas favicon)", class: "block text-sm font-medium text-gray-700" %>
+      <span data-metadata-fetch-target="status" class="hidden text-xs text-gray-500" aria-busy="true">Buscando…</span>
+    </div>
+    <%= form.url_field :url,
+          class: "block w-full rounded-md border border-gray-300 px-3 py-2",
           data: { metadata_fetch_target: "url", action: "input->metadata-fetch#queue" } %>
-    <span data-metadata-fetch-target="status" class="hidden text-sm text-gray-500">Buscando…</span>
-    <p data-metadata-fetch-target="error" class="hidden text-sm text-red-600"></p>
+    <p data-metadata-fetch-target="error" class="hidden text-sm text-amber-700 mt-1"></p>
   </div>
 
   <div>
     <%= form.label :title, "Título", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= form.text_field :title, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+    <%= form.text_field :title, class: "block w-full rounded-md border border-gray-300 px-3 py-2", data: { wix_autocomplete_target: "title" } %>
   </div>
 
   <div>
     <%= form.label :description, "Descrição", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= form.text_area :description, rows: 4, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+    <%= form.text_area :description, rows: 4, class: "block w-full rounded-md border border-gray-300 px-3 py-2", data: { wix_autocomplete_target: "description" } %>
   </div>
 
   <div>
     <%= form.label :image_url, "URL da imagem", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= form.url_field :image_url, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+    <%= form.url_field :image_url, class: "block w-full rounded-md border border-gray-300 px-3 py-2", data: { wix_autocomplete_target: "imageUrl" } %>
   </div>
 
   <div>
     <%= form.label :favicon_url, "Favicon", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= form.url_field :favicon_url, class: "block w-full rounded-md border border-gray-300 px-3 py-2",
-          data: { metadata_fetch_target: "favicon" } %>
+    <%= form.url_field :favicon_url, class: "block w-full rounded-md border border-gray-300 px-3 py-2", data: { metadata_fetch_target: "favicon" } %>
   </div>
 
   <div class="flex flex-wrap gap-3 pt-2">

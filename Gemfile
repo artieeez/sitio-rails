@@ -64,3 +64,5 @@ end
 gem "faraday", "~> 2.14"
 
 gem "faraday-follow_redirects", "~> 0.5.0"
+
+gem "jwt", "~> 3.2"

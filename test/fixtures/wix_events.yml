@@ -1,0 +1,23 @@
+pending:
+  event_type: com.wix.ecommerce.catalog.api.v1.CollectionCreated
+  wix_entity_id: collection-fixture-pending
+  payload:
+    collectionId: collection-fixture-pending
+    name: Fixture Collection
+    visible: true
+
+processed:
+  event_type: com.wix.ecommerce.catalog.api.v1.CollectionChanged
+  wix_entity_id: collection-fixture-processed
+  payload:
+    collectionId: collection-fixture-processed
+  processed_at: <%= 1.day.ago %>
+
+failed:
+  event_type: com.wix.ecommerce.catalog.api.v1.ProductCreated
+  wix_entity_id: product-fixture-failed
+  payload:
+    productId: product-fixture-failed
+  failed_at: <%= 1.day.ago %>
+  last_error: Wix upstream error
+  attempts: 5

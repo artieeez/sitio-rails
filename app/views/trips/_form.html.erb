@@ -1,4 +1,11 @@
-<%= form_with model: [school, trip], class: "space-y-4" do |form| %>
+<%= form_with model: [school, trip], class: "space-y-4",
+      data: {
+        controller: "wix-autocomplete",
+        wix_autocomplete_url_value: autocomplete_wix_products_path(format: :json),
+        wix_autocomplete_show_url_value: "/wix/products/:id.json",
+        wix_autocomplete_school_id_value: school.id,
+        wix_autocomplete_min_length_value: 0
+      } do |form| %>
   <% if trip.errors.any? %>
     <div class="py-2 px-3 bg-red-50 text-red-600 rounded-lg" id="error_explanation">
       <h2 class="font-medium"><%= pluralize(trip.errors.count, "erro") %> impedem salvar:</h2>
@@ -10,24 +17,43 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :wix_product_id, "Produto Wix", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= form.text_field :wix_product_id, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  <div class="relative">
+    <div class="flex items-center gap-2 mb-1">
+      <%= form.label :wix_product_id, "Produto Wix", class: "block text-sm font-medium text-gray-700" %>
+      <span data-wix-autocomplete-target="status" class="hidden text-xs text-gray-500">Buscando…</span>
+    </div>
+    <%= form.hidden_field :wix_product_id, data: { wix_autocomplete_target: "id" } %>
+    <%= form.hidden_field :wix_product_slug, data: { wix_autocomplete_target: "slug" } %>
+    <%= form.hidden_field :wix_product_page_url, data: { wix_autocomplete_target: "productPageUrl" } %>
+    <%= form.hidden_field :wix_media_file_id, data: { wix_autocomplete_target: "mediaFileId" } %>
+    <input type="search"
+           value="<%= trip.wix_product_id %>"
+           placeholder="Buscar produto na coleção da escola…"
+           autocomplete="off"
+           class="block w-full rounded-md border border-gray-300 px-3 py-2"
+           data-wix-autocomplete-target="query"
+           data-action="input->wix-autocomplete#queue focus->wix-autocomplete#open">
+    <ul data-wix-autocomplete-target="results"
+        class="hidden absolute z-10 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-sm divide-y divide-gray-100 max-h-60 overflow-auto"></ul>
+    <p data-wix-autocomplete-target="error" class="hidden text-sm text-amber-700 mt-1"></p>
+    <% if school.wix_collection_id.blank? %>
+      <p class="text-xs text-amber-700 mt-1">Vincule uma coleção Wix na escola para buscar produtos.</p>
+    <% end %>
   </div>
 
   <div>
     <%= form.label :default_expected_amount_minor, "Valor esperado padrão (centavos)", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= form.number_field :default_expected_amount_minor, min: 0, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+    <%= form.number_field :default_expected_amount_minor, min: 0, class: "block w-full rounded-md border border-gray-300 px-3 py-2", data: { wix_autocomplete_target: "amountMinor" } %>
   </div>
 
   <div>
     <%= form.label :title, "Título", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= form.text_field :title, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+    <%= form.text_field :title, class: "block w-full rounded-md border border-gray-300 px-3 py-2", data: { wix_autocomplete_target: "title" } %>
   </div>
 
   <div>
     <%= form.label :description, "Descrição", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= form.text_area :description, rows: 4, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+    <%= form.text_area :description, rows: 4, class: "block w-full rounded-md border border-gray-300 px-3 py-2", data: { wix_autocomplete_target: "description" } %>
   </div>
 
   <div>
@@ -38,7 +64,7 @@
 
   <div>
     <%= form.label :image_url, "URL da imagem", class: "block text-sm font-medium text-gray-700 mb-1" %>
-    <%= form.url_field :image_url, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+    <%= form.url_field :image_url, class: "block w-full rounded-md border border-gray-300 px-3 py-2", data: { wix_autocomplete_target: "imageUrl" } %>
   </div>
 
   <div class="flex flex-wrap gap-3 pt-2">

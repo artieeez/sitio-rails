@@ -10,7 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_20_215606) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_20_230000) do
+  create_table "audit_logs", force: :cascade do |t|
+    t.string "action", null: false
+    t.datetime "created_at", null: false
+    t.string "ip_address"
+    t.string "resource", null: false
+    t.string "user_email"
+    t.string "user_id", null: false
+    t.string "user_name"
+    t.index ["created_at"], name: "index_audit_logs_on_created_at"
+    t.index ["user_id"], name: "index_audit_logs_on_user_id"
+  end
+
   create_table "passenger_manual_settlements", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "passenger_id", null: false
@@ -138,6 +150,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_215606) do
     t.integer "role", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
+  end
+
+  create_table "wix_events", force: :cascade do |t|
+    t.integer "attempts", default: 0, null: false
+    t.datetime "claimed_at"
+    t.datetime "created_at", null: false
+    t.string "event_type", null: false
+    t.datetime "failed_at"
+    t.text "last_error"
+    t.json "payload", null: false
+    t.datetime "processed_at"
+    t.datetime "updated_at", null: false
+    t.string "wix_entity_id", null: false
+    t.index ["event_type"], name: "index_wix_events_on_event_type"
+    t.index ["processed_at"], name: "index_wix_events_on_processed_at"
+    t.index ["wix_entity_id"], name: "index_wix_events_on_wix_entity_id"
+  end
+
+  create_table "wix_integrations", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "private_api_key"
+    t.text "public_key"
+    t.string "site_id"
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "sessions", "users"

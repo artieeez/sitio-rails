@@ -2,13 +2,21 @@ class School::Deletion
   class Error < StandardError; end
   class NotAllowed < Error; end
 
-  def initialize(school)
+  def initialize(school, client: nil)
     @school = school
+    @client = client
   end
 
   def allowed?
-    # M1: local hard-delete only. Wix product-count gates arrive with M2.
+    return true if @school.wix_collection_id.blank?
+
+    collection = client.get_collection(@school.wix_collection_id)
+    collection.nil? || (collection["numberOfProducts"] || 0).zero?
+  rescue Wix::Client::ApiKeyMissing
+    # No Wix credentials configured: soft-fail permissive, allow the local delete.
     true
+  rescue Wix::Client::Error
+    false
   end
 
   def perform
@@ -16,4 +24,7 @@ class School::Deletion
 
     @school.destroy!
   end
+
+  private
+    def client = @client ||= Wix::Client.new
 end
