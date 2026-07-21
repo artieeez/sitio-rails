@@ -43,6 +43,7 @@ docker run --rm -p 80:80 \
 
 ## Docs
 
+- `docs/cutover-runbook.md` — **OCIR + GitHub Action + SealedSecret (`RAILS_MASTER_KEY`) + cutover**
 - `docs/adr/` — architecture decisions
 - `.specs/project/PROJECT.md` — vision, scope, constraints
 - `.specs/project/ROADMAP.md` — milestone breakdown (M0–M5)

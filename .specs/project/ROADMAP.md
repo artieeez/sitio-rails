@@ -1,7 +1,7 @@
 # Roadmap
 
 **Current Milestone:** M5 — Cutover
-**Status:** M4 complete (AD-009). Admin Wix config UI (`Admin::WixIntegrationsController`, site picker, webhook docs, real `Wix::Event` inbox) and the mutating-action `AuditLog` trail are live. Next: M5 cutover (artr-gitops manifests + DNS switch), not started.
+**Status:** M5 in progress — OCIR `sitio-rails` repo (terraform), GitHub Action `Deploy Rails`, and artr-gitops Rails manifests + IngressRoute flip drafted. Nest/React Argo apps removed. Remaining: `terraform apply`, seal `RAILS_MASTER_KEY`, push, run workflow.
 
 Parity checklist source: `.specs/codebase/PORT-INVENTORY.md`. Cutover is big-bang (ADR-001/003): old NestJS/React stack stays live and is the parity reference until M5 ships, then it's retired in one change.
 
@@ -150,16 +150,16 @@ Parity checklist source: `.specs/codebase/PORT-INVENTORY.md`. Cutover is big-ban
 
 ### Features
 
-**artr-gitops manifests** - PLANNED
+**artr-gitops manifests** - IN PROGRESS
 
-- New Rails Deployment + Service + IngressRoute manifests, SQLite PVC on existing `nfs-client` storage class (single writer replica)
-- Remove Sitio-specific TinyAuth forwardAuth wiring (ADR-002)
+- Rails Deployment + Service + IngressRoute + SQLite PVC (`nfs-client`, single writer) under `apps/sitio-*/sitio-rails/`
+- TinyAuth forwardAuth removed from Sitio hosts (in-app auth)
+- Nest backend / React dashboard / Postgres ArgoCD Applications removed (manifest trees kept as retired)
 
-**DNS/ingress switch + retirement** - PLANNED
+**DNS/ingress switch + retirement** - IN PROGRESS
 
-- Point production ingress at the Rails app
-- Decommission `apps/backend` + `apps/dashboard` Deployments in `artr-gitops`
-- Archive (don't delete) `sitio-monorepo` app code for reference
+- Same hosts (`sitio-staging.artr.com.br` / `sitio.artr.com.br`) now route to `sitio-rails`
+- Operator steps: terraform apply OCIR repo, seal `RAILS_MASTER_KEY`, run Deploy Rails workflow — see `docs/cutover-runbook.md`
 
 ---
 

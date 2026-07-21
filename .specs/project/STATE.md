@@ -1,7 +1,7 @@
 # State
 
-**Last Updated:** 2026-07-20
-**Current Work:** M4 complete (AD-009). Next: M5 — cutover (artr-gitops manifests + DNS/ingress switch), not started.
+**Last Updated:** 2026-07-21
+**Current Work:** M5 cutover in progress — terraform OCIR `sitio-rails`, GH Action, gitops manifests ready. Blocked on human: `terraform apply`, kubeseal `RAILS_MASTER_KEY`, push repos, run Deploy Rails workflow.
 
 ---
 
