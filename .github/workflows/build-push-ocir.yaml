@@ -123,11 +123,12 @@ jobs:
               exit 1
               ;;
           esac
-          if ! grep -qE 'image: (vcp\.ocir\.io/.+/sitio-rails:|:sha-)' "$FILE"; then
+          if ! grep -q 'image: vcp.ocir.io/.*/sitio-rails:' "$FILE"; then
             echo "Expected image line not found in $FILE" >&2
             exit 1
           fi
-          sed -i -E "s|image: (vcp\.ocir\.io/.+/sitio-rails:|:sha-).*|image: ${IMAGE}|" "$FILE"
+          # Use # delimiter — IMAGE contains / and the old | form broke on regex alternation.
+          sed -i "s#image: vcp.ocir.io/.*/sitio-rails:.*#image: ${IMAGE}#" "$FILE"
 
       - name: Commit and push
         if: steps.gate.outputs.skip == 'false'
