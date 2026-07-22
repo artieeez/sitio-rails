@@ -13,6 +13,9 @@ on:
 
 env:
   REGISTRY: vcp.ocir.io
+  # Must not be a secret: job outputs that embed secret values are blanked
+  # for dependent jobs, which previously wrote `image: :sha-...` into gitops.
+  OCIR_NAMESPACE: axtvnrdemzo7
   IMAGE_NAME: sitio-rails
 
 jobs:
@@ -55,13 +58,11 @@ jobs:
 
       - name: Image tags
         id: meta
-        env:
-          OCIR_NAMESPACE: ${{ secrets.OCIR_NAMESPACE }}
         run: |
           HEAD_SHA="$(git rev-parse HEAD)"
           SHORT_SHA="$(echo "$HEAD_SHA" | cut -c1-7)"
           echo "sha_tag=sha-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
-          echo "image=${{ env.REGISTRY }}/${OCIR_NAMESPACE}/${{ env.IMAGE_NAME }}" >> "$GITHUB_OUTPUT"
+          echo "image=${{ env.REGISTRY }}/${{ env.OCIR_NAMESPACE }}/${{ env.IMAGE_NAME }}" >> "$GITHUB_OUTPUT"
 
       - name: Build and push
         uses: docker/build-push-action@v7
@@ -115,11 +116,18 @@ jobs:
           IMAGE: ${{ needs.build.outputs.image }}:${{ needs.build.outputs.sha_tag }}
         run: |
           FILE=gitops/apps/sitio-staging/sitio-rails/deployment.yaml
-          if ! grep -q 'image: vcp.ocir.io/.*/sitio-rails:' "$FILE"; then
+          case "$IMAGE" in
+            vcp.ocir.io/*/sitio-rails:sha-*) ;;
+            *)
+              echo "Invalid IMAGE (likely blanked job output): '$IMAGE'" >&2
+              exit 1
+              ;;
+          esac
+          if ! grep -qE 'image: (vcp\.ocir\.io/.+/sitio-rails:|:sha-)' "$FILE"; then
             echo "Expected image line not found in $FILE" >&2
             exit 1
           fi
-          sed -i "s|image: vcp.ocir.io/.*/sitio-rails:.*|image: ${IMAGE}|" "$FILE"
+          sed -i -E "s|image: (vcp\.ocir\.io/.+/sitio-rails:|:sha-).*|image: ${IMAGE}|" "$FILE"
 
       - name: Commit and push
         if: steps.gate.outputs.skip == 'false'
